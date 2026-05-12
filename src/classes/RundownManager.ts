@@ -149,12 +149,13 @@ export class RundownManager {
 	 * Adds a new link to the story that references the cue at the 'cueIndex'
 	 */
 	private addLinkToStory(story: INewsStory, cueIndex: number): void {
-		const lines = story.body!.split('<p>')
+		const body = story.body ?? ''
+		const lines = body.split('<p>')
 		const primaryCueIndex = lines.findIndex((line) => !!line.match(/<pi>(.*?)<\/pi>/i))
 		story.body =
 			primaryCueIndex > 0
 				? this.insertLinkAfterFirstPrimaryCue(lines, primaryCueIndex, cueIndex)
-				: story.body!.concat(`<p><\a idref="${cueIndex}"></a></p>`)
+				: body.concat(`<p><a idref="${cueIndex}"></a></p>`)
 	}
 
 	private insertLinkAfterFirstPrimaryCue(lines: string[], typeIndex: number, layoutCueIndex: number): string {
@@ -162,7 +163,7 @@ export class RundownManager {
 		const afterPrimaryCueHalf = lines.slice(typeIndex + 1, lines.length)
 		return this.reassembleBody([
 			...throughPrimaryCueHalf,
-			`<\a idref="${layoutCueIndex}"></a></p>\r\n`,
+			`<a idref="${layoutCueIndex}"></a></p>\r\n`,
 			...afterPrimaryCueHalf,
 		])
 	}
@@ -177,7 +178,7 @@ export class RundownManager {
 	 * Adds a cue to the story. Returns the index of the newly added cue.
 	 */
 	private addCueToStory(story: INewsStory, cueKey: string): number {
-		story.cues.push([`${cueKey}=${story.fields.layout!.value.toUpperCase()}`])
+		story.cues.push([`${cueKey}=${story.fields.layout?.value.toUpperCase() ?? ''}`])
 		return story.cues.length - 1
 	}
 

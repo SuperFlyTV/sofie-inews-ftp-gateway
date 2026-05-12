@@ -145,8 +145,8 @@ function parseShowstyleVariant(cue: UnparsedCue | undefined): string | null {
 
 	// Kommando cue (ignoring timing)
 	const showstyleVariantPattern = /^\s*SOFIE\s*=\s*SHOWSTYLEVARIANT/i
-	if (numberOfCueLines >= 2 && showstyleVariantPattern.test(cue![0])) {
-		return cue![1].trim()
+	if (cue && numberOfCueLines >= 2 && showstyleVariantPattern.test(cue[0])) {
+		return cue[1].trim()
 	}
 	return null
 }
@@ -162,7 +162,7 @@ function getCueOrder(segment: UnrankedSegment): number[] {
 	const order: number[] = []
 	let match: RegExpExecArray | null
 	while ((match = refPattern.exec(body))) {
-		const id = parseInt(match.groups!.id, 10)
+		const id = parseInt(match.groups?.id ?? '0', 10)
 		order.push(id)
 	}
 	return order
