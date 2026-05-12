@@ -2,7 +2,7 @@ import { createDefaultLogger, Level } from '@tv2media/logger'
 
 export const logger = createDefaultLogger()
 
-export function setupLogger() {
+export function setupLogger(): void {
 	// Hijack console.log:
 	// @ts-ignore
 	if (!process.env.DEV) {
@@ -22,7 +22,7 @@ export function setupLogger() {
 	}
 }
 
-export function setLogLevel(level: keyof typeof Level) {
+export function setLogLevel(level: keyof typeof Level): void {
 	logger.setLevel(Level[level])
 }
 

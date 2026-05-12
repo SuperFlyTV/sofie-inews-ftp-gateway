@@ -4,7 +4,7 @@ import { IngestSegment } from '@sofie-automation/blueprints-integration'
 
 import { ISegment } from './classes/datastructures/Segment.js'
 
-export function literal<T>(o: T) {
+export function literal<T>(o: T): T {
 	return o
 }
 

@@ -92,7 +92,7 @@ export class Connector {
 		}
 	}
 
-	setupObserver() {
+	setupObserver(): void {
 		// Setup observer.
 		const observer = this.coreHandler.core.observe(PeripheralDevicePubSubCollectionsNames.peripheralDeviceForDevice)
 		this._observers.push(observer)
