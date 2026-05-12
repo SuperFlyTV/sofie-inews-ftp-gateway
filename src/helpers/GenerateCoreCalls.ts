@@ -310,10 +310,7 @@ function createSegmentChangedCoreCalls(
 		.filter((playlistChange) => playlistChange.type === PlaylistChangeType.PlaylistChangeSegmentChanged)
 		.map((playlistChange) => {
 			const change: PlaylistChangeSegmentMoved | PlaylistChangeSegmentCreated | PlaylistChangeSegmentChanged =
-				playlistChange as
-					| PlaylistChangeSegmentMoved
-					| PlaylistChangeSegmentCreated
-					| PlaylistChangeSegmentChanged
+				playlistChange
 			const segmentId = change.segmentExternalId
 			const rundownId = change.rundownExternalId
 			const inews = iNewsDataCache.get(change.segmentExternalId)

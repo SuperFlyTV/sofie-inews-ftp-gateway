@@ -29,7 +29,7 @@ export function mutateSegment(segment: RundownSegment): IngestSegment {
 		externalId: segment.externalId,
 		name: segment.name,
 		rank: segment.rank,
-		payload: omit(segment, 'externalId', 'rank', 'name') as MutatedSegment,
+		payload: omit(segment, 'externalId', 'rank', 'name'),
 		parts: [],
 	}
 }

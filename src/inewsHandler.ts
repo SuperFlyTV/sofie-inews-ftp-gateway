@@ -49,7 +49,7 @@ export class InewsFTPHandler {
 
 	async init(coreHandler: CoreHandler): Promise<void> {
 		const peripheralDevice = await coreHandler.core.getPeripheralDevice()
-		this._settings = (peripheralDevice.deviceSettings || {}) as INewsDeviceSettings
+		this._settings = peripheralDevice.deviceSettings || {}
 
 		try {
 			await this._setupDevices()
