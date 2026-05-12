@@ -1,7 +1,7 @@
-import { GetDeletedSegments, GetInsertedSegments, GetMovedSegments } from '../../helpers/GetMovedSegments'
-import { SegmentId } from '../../helpers/id'
-import { ParsedINewsIntoSegments } from '../ParsedINewsToSegments'
-import { ReducedSegment } from '../RundownWatcher'
+import { GetDeletedSegments, GetInsertedSegments, GetMovedSegments } from '../../helpers/GetMovedSegments.js'
+import { SegmentId } from '../../helpers/id.js'
+import { ParsedINewsIntoSegments } from '../ParsedINewsToSegments.js'
+import { ReducedSegment } from '../RundownWatcher.js'
 import {
 	makeSegmentRanks,
 	makeSegmentRanksInner,
@@ -13,7 +13,7 @@ import {
 	segmentGW06,
 	segmentGW07,
 	segmentGW08,
-} from './__mocks__/mockSegments'
+} from './__mocks__/mockSegments.js'
 
 describe('ParsedINewsIntoSegments', () => {
 	it('Finds the the next available rank', () => {
@@ -144,7 +144,7 @@ describe('ParsedINewsIntoSegments', () => {
 			{ ...segmentChanges, changedSegments: [] }
 		)
 		const segments: Array<{ rank: number; externalId: SegmentId }> = []
-		for (let [segmentId, rank] of result.segmentRanks) {
+		for (const [segmentId, rank] of result.segmentRanks) {
 			segments.push({ externalId: segmentId, rank })
 		}
 		expect(segments).toEqual([
@@ -183,7 +183,7 @@ describe('ParsedINewsIntoSegments', () => {
 			{ ...segmentChanges, changedSegments: [] }
 		)
 		const segments: Array<{ rank: number; externalId: SegmentId }> = []
-		for (let [segmentId, rank] of result.segmentRanks) {
+		for (const [segmentId, rank] of result.segmentRanks) {
 			segments.push({ externalId: segmentId, rank })
 		}
 		expect(segments).toEqual([
@@ -222,7 +222,7 @@ describe('ParsedINewsIntoSegments', () => {
 			{ ...segmentChanges, changedSegments: [] }
 		)
 		const segments: Array<{ rank: number; externalId: SegmentId }> = []
-		for (let [segmentId, rank] of result.segmentRanks) {
+		for (const [segmentId, rank] of result.segmentRanks) {
 			segments.push({ externalId: segmentId, rank })
 		}
 		expect(segments).toEqual([
@@ -274,7 +274,7 @@ describe('ParsedINewsIntoSegments', () => {
 			{ ...segmentChanges, changedSegments: [] }
 		)
 		const segments: Array<{ rank: number; externalId: SegmentId }> = []
-		for (let [segmentId, rank] of result.segmentRanks) {
+		for (const [segmentId, rank] of result.segmentRanks) {
 			segments.push({ externalId: segmentId, rank })
 		}
 		expect(segments).toEqual([
@@ -337,7 +337,7 @@ describe('ParsedINewsIntoSegments', () => {
 			{ ...segmentChanges, changedSegments: [] }
 		)
 		const segments: Array<{ rank: number; externalId: SegmentId }> = []
-		for (let [segmentId, rank] of result.segmentRanks) {
+		for (const [segmentId, rank] of result.segmentRanks) {
 			segments.push({ externalId: segmentId, rank })
 		}
 		expect(segments).toEqual([
@@ -382,7 +382,7 @@ describe('ParsedINewsIntoSegments', () => {
 			{ ...segmentChanges, changedSegments: [] }
 		)
 		const segments: Array<{ rank: number; externalId: SegmentId }> = []
-		for (let [segmentId, rank] of result.segmentRanks) {
+		for (const [segmentId, rank] of result.segmentRanks) {
 			segments.push({ externalId: segmentId, rank })
 		}
 		expect(segments).toEqual([
@@ -435,7 +435,7 @@ describe('ParsedINewsIntoSegments', () => {
 			{ ...segmentChanges, changedSegments: [] }
 		)
 		const segments: Array<{ rank: number; externalId: SegmentId }> = []
-		for (let [segmentId, rank] of result.segmentRanks) {
+		for (const [segmentId, rank] of result.segmentRanks) {
 			segments.push({ externalId: segmentId, rank })
 		}
 		expect(segments).toEqual([
@@ -498,7 +498,7 @@ describe('ParsedINewsIntoSegments', () => {
 			{ ...segmentChanges, changedSegments: [] }
 		)
 		const segments: Array<{ rank: number; externalId: SegmentId }> = []
-		for (let [segmentId, rank] of result.segmentRanks) {
+		for (const [segmentId, rank] of result.segmentRanks) {
 			segments.push({ externalId: segmentId, rank })
 		}
 		expect(segments).toEqual([
@@ -580,7 +580,7 @@ describe('ParsedINewsIntoSegments', () => {
 			{ ...segmentChanges, changedSegments: [] }
 		)
 		const segments: Array<{ rank: number; externalId: SegmentId }> = []
-		for (let [segmentId, rank] of result.segmentRanks) {
+		for (const [segmentId, rank] of result.segmentRanks) {
 			segments.push({ externalId: segmentId, rank })
 		}
 		expect(segments).toEqual([
@@ -642,7 +642,7 @@ describe('ParsedINewsIntoSegments', () => {
 			'segment-06': { rank: 5000 },
 		})
 
-		let segmentChanges = GetMovedSegments(
+		const segmentChanges = GetMovedSegments(
 			[
 				'segment-05',
 				'segment-02',
@@ -662,7 +662,7 @@ describe('ParsedINewsIntoSegments', () => {
 			{ ...segmentChanges, changedSegments: [] }
 		)
 		let segments: Array<{ rank: number; externalId: SegmentId }> = []
-		for (let [segmentId, rank] of result.segmentRanks) {
+		for (const [segmentId, rank] of result.segmentRanks) {
 			segments.push({ externalId: segmentId, rank })
 		}
 		expect(segments).toEqual([
@@ -722,7 +722,7 @@ describe('ParsedINewsIntoSegments', () => {
 			'segment-06': { rank: 5000 },
 		})
 
-		let segmentChanges2 = GetMovedSegments(
+		const segmentChanges2 = GetMovedSegments(
 			[
 				'segment-05',
 				'segment-02',
@@ -742,7 +742,7 @@ describe('ParsedINewsIntoSegments', () => {
 			{ ...segmentChanges2, changedSegments: [] }
 		)
 		segments = []
-		for (let [segmentId, rank] of result.segmentRanks) {
+		for (const [segmentId, rank] of result.segmentRanks) {
 			segments.push({ externalId: segmentId, rank })
 		}
 		expect(segments).toEqual([
@@ -822,7 +822,7 @@ describe('ParsedINewsIntoSegments', () => {
 			{ ...segmentChanges3, changedSegments: [] }
 		)
 		segments = []
-		for (let [segmentId, rank] of result.segmentRanks) {
+		for (const [segmentId, rank] of result.segmentRanks) {
 			segments.push({ externalId: segmentId, rank })
 		}
 		expect(segments).toEqual([
@@ -883,7 +883,7 @@ describe('ParsedINewsIntoSegments', () => {
 			{ ...segmentChanges, changedSegments: [] }
 		)
 		let segments: Array<{ rank: number; externalId: SegmentId }> = []
-		for (let [segmentId, rank] of result.segmentRanks) {
+		for (const [segmentId, rank] of result.segmentRanks) {
 			segments.push({ externalId: segmentId, rank })
 		}
 		expect(segments).toEqual([
@@ -916,7 +916,7 @@ describe('ParsedINewsIntoSegments', () => {
 			{ ...segmentChanges2, changedSegments: [] }
 		)
 		segments = []
-		for (let [segmentId, rank] of result.segmentRanks) {
+		for (const [segmentId, rank] of result.segmentRanks) {
 			segments.push({ externalId: segmentId, rank })
 		}
 		expect(segments).toEqual([

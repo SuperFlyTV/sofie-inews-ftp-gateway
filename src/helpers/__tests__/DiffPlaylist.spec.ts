@@ -1,8 +1,8 @@
 import { INewsFields, INewsStory } from '@tv2media/inews'
 
-import { INewsRundown } from '../../classes/datastructures/Rundown'
-import { RundownSegment } from '../../classes/datastructures/Segment'
-import { literal } from '../../helpers'
+import { INewsRundown } from '../../classes/datastructures/Rundown.js'
+import { RundownSegment } from '../../classes/datastructures/Segment.js'
+import { literal } from '../../helpers.js'
 import {
 	DiffPlaylist,
 	PlaylistChangeRundownCreated,
@@ -13,8 +13,8 @@ import {
 	PlaylistChangeSegmentDeleted,
 	PlaylistChangeSegmentMoved,
 	PlaylistChangeType,
-} from '../DiffPlaylist'
-import { SegmentId } from '../id'
+} from '../DiffPlaylist.js'
+import { SegmentId } from '../id.js'
 
 function makeINewsRundown(
 	rundownId: string,
@@ -67,7 +67,7 @@ function makeINewsStory(id: string, backTime?: string) {
 
 describe('DiffPlaylist', () => {
 	it('Reports no change', () => {
-		let newPlaylist = [
+		const newPlaylist = [
 			makeINewsRundown('test-rundown_1', [
 				{
 					_id: 'segment-01',
@@ -92,7 +92,7 @@ describe('DiffPlaylist', () => {
 			]),
 		]
 
-		let result = DiffPlaylist(newPlaylist, newPlaylist)
+		const result = DiffPlaylist(newPlaylist, newPlaylist)
 
 		expect(result.changes).toEqual([])
 		expect(result.segmentChanges.get('test-rundown_1')).toEqual({
@@ -112,7 +112,7 @@ describe('DiffPlaylist', () => {
 	})
 
 	it('Reports segments moved within rundown', () => {
-		let newPlaylist = [
+		const newPlaylist = [
 			makeINewsRundown('test-rundown_1', [
 				{
 					_id: 'segment-01',
@@ -137,7 +137,7 @@ describe('DiffPlaylist', () => {
 			]),
 		]
 
-		let prevPlaylist = [
+		const prevPlaylist = [
 			makeINewsRundown('test-rundown_1', [
 				{
 					_id: 'segment-02',
@@ -162,7 +162,7 @@ describe('DiffPlaylist', () => {
 			]),
 		]
 
-		let result = DiffPlaylist(newPlaylist, prevPlaylist)
+		const result = DiffPlaylist(newPlaylist, prevPlaylist)
 
 		expect(result.changes).toEqual([
 			literal<PlaylistChangeSegmentMoved>({
@@ -201,7 +201,7 @@ describe('DiffPlaylist', () => {
 	})
 
 	it('Reports deleted rundown', () => {
-		let prevPlaylist = [
+		const prevPlaylist = [
 			makeINewsRundown('test-rundown_1', [
 				{
 					_id: 'segment-01',
@@ -226,7 +226,7 @@ describe('DiffPlaylist', () => {
 			]),
 		]
 
-		let newPlaylist = [
+		const newPlaylist = [
 			makeINewsRundown('test-rundown_2', [
 				{
 					_id: 'segment-04',
@@ -240,7 +240,7 @@ describe('DiffPlaylist', () => {
 			]),
 		]
 
-		let result = DiffPlaylist(newPlaylist, prevPlaylist)
+		const result = DiffPlaylist(newPlaylist, prevPlaylist)
 
 		expect(result.changes).toEqual([
 			literal<PlaylistChangeRundownDeleted>({
@@ -265,7 +265,7 @@ describe('DiffPlaylist', () => {
 	})
 
 	it('Reports created rundown', () => {
-		let prevPlaylist = [
+		const prevPlaylist = [
 			makeINewsRundown('test-rundown_2', [
 				{
 					_id: 'segment-04',
@@ -279,7 +279,7 @@ describe('DiffPlaylist', () => {
 			]),
 		]
 
-		let newPlaylist = [
+		const newPlaylist = [
 			makeINewsRundown('test-rundown_1', [
 				{
 					_id: 'segment-01',
@@ -304,7 +304,7 @@ describe('DiffPlaylist', () => {
 			]),
 		]
 
-		let result = DiffPlaylist(newPlaylist, prevPlaylist)
+		const result = DiffPlaylist(newPlaylist, prevPlaylist)
 
 		expect(result.changes).toEqual([
 			literal<PlaylistChangeRundownCreated>({
@@ -329,7 +329,7 @@ describe('DiffPlaylist', () => {
 	})
 
 	it('Reports created segment', () => {
-		let prevPlaylist = [
+		const prevPlaylist = [
 			makeINewsRundown('test-rundown_1', [
 				{
 					_id: 'segment-01',
@@ -348,7 +348,7 @@ describe('DiffPlaylist', () => {
 			]),
 		]
 
-		let newPlaylist = [
+		const newPlaylist = [
 			makeINewsRundown('test-rundown_1', [
 				{
 					_id: 'segment-01',
@@ -373,7 +373,7 @@ describe('DiffPlaylist', () => {
 			]),
 		]
 
-		let result = DiffPlaylist(newPlaylist, prevPlaylist)
+		const result = DiffPlaylist(newPlaylist, prevPlaylist)
 
 		expect(result.changes).toEqual([
 			literal<PlaylistChangeSegmentCreated>({
@@ -412,7 +412,7 @@ describe('DiffPlaylist', () => {
 	})
 
 	it('Reports deleted segment', () => {
-		let prevPlaylist = [
+		const prevPlaylist = [
 			makeINewsRundown('test-rundown_1', [
 				{
 					_id: 'segment-01',
@@ -437,7 +437,7 @@ describe('DiffPlaylist', () => {
 			]),
 		]
 
-		let newPlaylist = [
+		const newPlaylist = [
 			makeINewsRundown('test-rundown_1', [
 				{
 					_id: 'segment-01',
@@ -456,7 +456,7 @@ describe('DiffPlaylist', () => {
 			]),
 		]
 
-		let result = DiffPlaylist(newPlaylist, prevPlaylist)
+		const result = DiffPlaylist(newPlaylist, prevPlaylist)
 
 		expect(result.changes).toEqual([
 			literal<PlaylistChangeSegmentDeleted>({
@@ -495,7 +495,7 @@ describe('DiffPlaylist', () => {
 	})
 
 	it('Emits rundown create over segment create', () => {
-		let prevPlaylist = [
+		const prevPlaylist = [
 			makeINewsRundown('test-rundown_2', [
 				{
 					_id: 'segment-04',
@@ -509,7 +509,7 @@ describe('DiffPlaylist', () => {
 			]),
 		]
 
-		let newPlaylist = [
+		const newPlaylist = [
 			makeINewsRundown('test-rundown_1', [
 				{
 					_id: 'segment-01',
@@ -534,7 +534,7 @@ describe('DiffPlaylist', () => {
 			]),
 		]
 
-		let result = DiffPlaylist(newPlaylist, prevPlaylist)
+		const result = DiffPlaylist(newPlaylist, prevPlaylist)
 
 		expect(result.changes).toEqual([
 			literal<PlaylistChangeRundownCreated>({

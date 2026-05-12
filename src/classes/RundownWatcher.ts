@@ -275,7 +275,7 @@ export class RundownWatcher extends EventEmitter {
 		this.stopWatcher()
 	}
 
-	public async ResyncRundown(rundownExternalId: string) {
+	public async ResyncRundown(rundownExternalId: string): Promise<void> {
 		const release = await this.processingRundown.acquire()
 		const playlistExternalId = rundownExternalId.replace(/_\d+$/, '')
 		const playlist = this.playlists.get(playlistExternalId)

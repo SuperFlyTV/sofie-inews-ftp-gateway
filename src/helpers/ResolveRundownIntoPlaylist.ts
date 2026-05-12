@@ -18,8 +18,8 @@ export function ResolveRundownIntoPlaylist(
 	const resolvedPlaylist: ResolvedPlaylist = []
 	const untimedSegments: Set<SegmentId> = new Set()
 
-	let rundownIndex = 0
-	let currentRundown: ResolvedPlaylistRundown = {
+	const rundownIndex = 0
+	const currentRundown: ResolvedPlaylistRundown = {
 		rundownId: `${playlistExternalId}_${rundownIndex + 1}`, // 1-index for users
 		segments: [],
 		payload: {
@@ -72,15 +72,15 @@ export function ResolveRundownIntoPlaylist(
 	return { resolvedPlaylist, untimedSegments }
 }
 
-function isSegment(segment: UnrankedSegment | undefined): segment is UnrankedSegment {
+function _isSegment(segment: UnrankedSegment | undefined): segment is UnrankedSegment {
 	return segment !== undefined
 }
 
-function isSegmentFloated(segment: UnrankedSegment): boolean {
+function _isSegmentFloated(segment: UnrankedSegment): boolean {
 	return segment.iNewsStory.meta.float === 'float'
 }
 
-function isSegmentEmpty(segment: UnrankedSegment): boolean {
+function _isSegmentEmpty(segment: UnrankedSegment): boolean {
 	const isCuesEmpty = segment.iNewsStory.cues.length === 0
 	return isCuesEmpty && isSegmentBodyEmpty(segment)
 }
