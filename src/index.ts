@@ -1,7 +1,7 @@
+import yargs from 'yargs/yargs'
+
 import { Config, Connector } from './connector.js'
 import { ensureLogLevel, logger, setLogLevel, setupLogger } from './logger.js'
-
-import yargs = require('yargs/yargs')
 
 const argv = yargs(process.argv.slice(2))
 	.options({
