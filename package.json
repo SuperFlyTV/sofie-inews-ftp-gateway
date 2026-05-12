@@ -112,5 +112,5 @@
     "message": "chore(release): %s [skip ci]",
     "tagPrefix": ""
   },
-  "packageManager": "yarn@3.6.4"
+  "packageManager": "yarn@4.14.1"
 }
