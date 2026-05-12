@@ -80,7 +80,7 @@ export class CoreHandler {
 		})
 		this.core.onError((error) => {
 			this.logger.data(error).error('Core Error:')
-			this.setStatus(StatusCode.BAD, ['Core error'])
+			void this.setStatus(StatusCode.BAD, ['Core error'])
 		})
 
 		const ddpConfig: DDPConnectorOptions = {
