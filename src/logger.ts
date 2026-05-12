@@ -4,7 +4,7 @@ export const logger = createDefaultLogger()
 
 export function setupLogger(): void {
 	// Hijack console.log:
-	// @ts-expect-error
+	// @ts-expect-error hijacking console.log
 	if (!process.env.DEV) {
 		const orgConsoleLog = console.log
 		console.log = function (...args: any[]) {

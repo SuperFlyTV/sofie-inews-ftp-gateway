@@ -1,10 +1,10 @@
 import * as _ from 'underscore'
 
-import { parseModifiedDateFromInewsStoryWithFallbackToNow } from '../../../helpers'
-import { SegmentId } from '../../../helpers/id'
-import { INewsStoryGW, RundownSegment } from '../../datastructures/Segment'
-import { SegmentRankings, SegmentRankingsInner } from '../../ParsedINewsToSegments'
-import { ReducedSegment } from '../../RundownWatcher'
+import { parseModifiedDateFromInewsStoryWithFallbackToNow } from '../../../helpers.js'
+import { SegmentId } from '../../../helpers/id.js'
+import { INewsStoryGW, RundownSegment } from '../../datastructures/Segment.js'
+import { SegmentRankings, SegmentRankingsInner } from '../../ParsedINewsToSegments.js'
+import { ReducedSegment } from '../../RundownWatcher.js'
 
 export const rundownId = 'test-rundown'
 

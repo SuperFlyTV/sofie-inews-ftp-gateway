@@ -1,6 +1,6 @@
-import { makeSegmentRanks, rundownId } from '../../classes/__tests__/__mocks__/mockSegments'
-import { AssignRanksToSegments } from '../AssignRanksToSegments'
-import { PlaylistChange } from '../DiffPlaylist'
+import { makeSegmentRanks, rundownId } from '../../classes/__tests__/__mocks__/mockSegments.js'
+import { AssignRanksToSegments } from '../AssignRanksToSegments.js'
+import { PlaylistChange } from '../DiffPlaylist.js'
 
 const segmentId0 = 'segment0'
 const segmentId1 = 'segment1'

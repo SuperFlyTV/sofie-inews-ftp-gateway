@@ -1,5 +1,5 @@
-import { INewsStoryGW } from '../datastructures/Segment'
-import { RundownManager } from '../RundownManager'
+import { INewsStoryGW } from '../datastructures/Segment.js'
+import { RundownManager } from '../RundownManager.js'
 
 const LAYOUT: string = 'n'
 
@@ -22,9 +22,9 @@ describe('RundownManager', () => {
 		it('has a layout, designLayout cue is added', () => {
 			const story = createStory(LAYOUT)
 
-			expect(story.cues.some((cue) => cue!.some((line) => line.match(/DESIGN_LAYOUT=/i)))).toBeFalsy()
+			expect(story.cues.some((cue) => cue?.some((line) => line.match(/DESIGN_LAYOUT=/i)))).toBeFalsy()
 			testee.generateCuesFromLayoutField(story)
-			expect(story.cues.some((cue) => cue!.some((line) => line.match(/DESIGN_LAYOUT=/i)))).toBeTruthy()
+			expect(story.cues.some((cue) => cue?.some((line) => line.match(/DESIGN_LAYOUT=/i)))).toBeTruthy()
 		})
 
 		it('has the upper cased layout value in the design cue', () => {
@@ -32,7 +32,7 @@ describe('RundownManager', () => {
 
 			testee.generateCuesFromLayoutField(story)
 
-			expect(story.cues[0]![0]).toBe(`DESIGN_LAYOUT=${LAYOUT.toUpperCase()}`)
+			expect(story.cues[0]?.[0]).toBe(`DESIGN_LAYOUT=${LAYOUT.toUpperCase()}`)
 		})
 
 		it('has a layout, link to cue is generated in body', () => {
@@ -60,7 +60,7 @@ describe('RundownManager', () => {
 
 			testee.generateCuesFromLayoutField(story)
 
-			const lines = story.body!.split('\r\n')
+			const lines = story.body?.split('\r\n')
 			const index = lines.findIndex((line) => line.match('<pi>'))
 			expect(lines[index + 1]).toMatch(/<a(.*?)<\/a>/i)
 		})
@@ -68,9 +68,9 @@ describe('RundownManager', () => {
 		it('adds a DESIGN_BG to cues', () => {
 			const story = createStory(LAYOUT)
 
-			expect(story.cues.some((cue) => cue!.some((line) => line.match(/DESIGN_BG=/i)))).toBeFalsy()
+			expect(story.cues.some((cue) => cue?.some((line) => line.match(/DESIGN_BG=/i)))).toBeFalsy()
 			testee.generateCuesFromLayoutField(story)
-			expect(story.cues.some((cue) => cue!.some((line) => line.match(/DESIGN_BG=/i)))).toBeTruthy()
+			expect(story.cues.some((cue) => cue?.some((line) => line.match(/DESIGN_BG=/i)))).toBeTruthy()
 		})
 
 		it('assigns the upper cased layout value to the DESIGN_BG cue', () => {
@@ -79,7 +79,7 @@ describe('RundownManager', () => {
 			testee.generateCuesFromLayoutField(story)
 
 			expect(
-				story.cues.some((cue) => cue!.some((line) => line.match(`DESIGN_BG=${LAYOUT.toUpperCase()}`)))
+				story.cues.some((cue) => cue?.some((line) => line.match(`DESIGN_BG=${LAYOUT.toUpperCase()}`)))
 			).toBeTruthy()
 		})
 
@@ -88,8 +88,8 @@ describe('RundownManager', () => {
 
 			testee.generateCuesFromLayoutField(story)
 
-			const cueIndex = story.cues!.findIndex((cue) => cue!.some((line) => line.match(/DESIGN_BG=/i)))
-			expect(story.body!.match(`<a idref="${cueIndex}"><\\/a>`)).toBeTruthy()
+			const cueIndex = story.cues.findIndex((cue) => cue?.some((line) => line.match(/DESIGN_BG=/i)))
+			expect(story.body?.match(`<a idref="${cueIndex}"><\\/a>`)).toBeTruthy()
 		})
 	})
 })
@@ -126,5 +126,5 @@ function testCorrectCueReferenceInLink(numberOfExistingCues: number): void {
 	}
 
 	testee.generateCuesFromLayoutField(story)
-	expect(story.body!.match(`<a idref="${numberOfExistingCues}"><\\/a>`)).toBeTruthy()
+	expect(story.body?.match(`<a idref="${numberOfExistingCues}"><\\/a>`)).toBeTruthy()
 }

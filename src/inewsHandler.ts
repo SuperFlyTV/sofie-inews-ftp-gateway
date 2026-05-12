@@ -113,6 +113,7 @@ export class InewsFTPHandler {
 					this._logger.info(`Connecting to iNews at ${status.host}`)
 				}
 			})()
+		})
 
 		this.iNewsConnection.on('error', (error) => {
 			this._logger.error(`FTP error: ${error.message}`)
