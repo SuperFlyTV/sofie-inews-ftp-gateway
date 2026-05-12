@@ -222,7 +222,7 @@ export class CoreHandler {
 			try {
 				const commandArg = cmd.args?.[0]
 				switch (cmd.functionName) {
-					case 'triggerReloadRundown':
+					case 'triggerReloadRundown': {
 						const reloadRundownResult = await Promise.resolve(this.triggerReloadRundown(commandArg))
 						success = true
 						await this.core.callMethodRaw(PeripheralDeviceAPIMethods.functionReply, [
@@ -231,7 +231,8 @@ export class CoreHandler {
 							reloadRundownResult,
 						])
 						break
-					case 'pingResponse':
+					}
+					case 'pingResponse': {
 						const pingResponseResult = await Promise.resolve(this.pingResponse(commandArg))
 						success = true
 						await this.core.callMethodRaw(PeripheralDeviceAPIMethods.functionReply, [
@@ -240,7 +241,8 @@ export class CoreHandler {
 							pingResponseResult,
 						])
 						break
-					case 'retireExecuteFunction':
+					}
+					case 'retireExecuteFunction': {
 						const retireExecuteFunctionResult = await Promise.resolve(
 							this.retireExecuteFunction(commandArg)
 						)
@@ -251,7 +253,8 @@ export class CoreHandler {
 							retireExecuteFunctionResult,
 						])
 						break
-					case 'killProcess':
+					}
+					case 'killProcess': {
 						const killProcessFunctionResult = await Promise.resolve(this.killProcess(commandArg))
 						success = true
 						await this.core.callMethodRaw(PeripheralDeviceAPIMethods.functionReply, [
@@ -260,7 +263,8 @@ export class CoreHandler {
 							killProcessFunctionResult,
 						])
 						break
-					case 'getSnapshot':
+					}
+					case 'getSnapshot': {
 						const getSnapshotResult = await Promise.resolve(this.getSnapshot())
 						success = true
 						await this.core.callMethodRaw(PeripheralDeviceAPIMethods.functionReply, [
@@ -269,6 +273,7 @@ export class CoreHandler {
 							getSnapshotResult,
 						])
 						break
+					}
 					default:
 						throw Error('Function "' + cmd.functionName + '" not found!')
 				}
