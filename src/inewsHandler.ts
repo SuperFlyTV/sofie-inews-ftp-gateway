@@ -180,7 +180,7 @@ export class InewsFTPHandler {
 		return rundownsCache
 	}
 
-	updateChanges(iNewsWatcher: RundownWatcher) {
+	updateChanges(iNewsWatcher: RundownWatcher): void {
 		iNewsWatcher
 			.on('info', (message: any) => {
 				this._logger.info(message)

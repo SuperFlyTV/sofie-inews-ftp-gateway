@@ -170,7 +170,7 @@ export class CoreHandler {
 	/**
 	 * Called when reconnected to core
 	 */
-	async onConnectionRestored() {
+	async onConnectionRestored(): Promise<void> {
 		// The following command was placed after subscription setup but being
 		// executed before it.
 		if (this._onConnected) this._onConnected()
@@ -179,7 +179,7 @@ export class CoreHandler {
 	/**
 	 * Called when connected to core.
 	 */
-	onConnected(fcn: () => any) {
+	onConnected(fcn: () => any): void {
 		this._onConnected = fcn
 	}
 	/**
@@ -292,7 +292,7 @@ export class CoreHandler {
 		}
 	}
 
-	retireExecuteFunction(cmdId: PeripheralDeviceCommandId) {
+	retireExecuteFunction(cmdId: PeripheralDeviceCommandId): void {
 		delete this._executedFunctions[unprotectString(cmdId)]
 	}
 
@@ -300,7 +300,7 @@ export class CoreHandler {
 	 * Listen for commands.
 	 */
 	// Made async as it does async work ...
-	setupObserverForPeripheralDeviceCommands() {
+	setupObserverForPeripheralDeviceCommands(): void {
 		this.logger.info(`Core: Setting up observers for peripheral device commands on ${this.core.deviceId}..`)
 		const observer = this.core.observe(PeripheralDevicePubSubCollectionsNames.peripheralDeviceCommands)
 		this.killProcess(0) // just make sure it exists
@@ -354,7 +354,7 @@ export class CoreHandler {
 	/**
 	 * Subscribes to changes to the device to get its associated studio ID.
 	 */
-	setupObserverForPeripheralDevices() {
+	setupObserverForPeripheralDevices(): void {
 		this.logger.info(`Core: Setting up observers for peripheral devices on ${this.core.deviceId}..`)
 		// Setup observer.
 		const observer = this.core.observe(PeripheralDevicePubSubCollectionsNames.peripheralDeviceForDevice)
@@ -390,7 +390,7 @@ export class CoreHandler {
 	 * Kills the gateway.
 	 * @param actually Whether to actually kill the gateway, or just test this function.
 	 */
-	killProcess(actually: number) {
+	killProcess(actually: number): number | boolean {
 		if (actually === 1) {
 			this.logger.info('KillProcess command received, shutting down in 1000ms!')
 			setTimeout(() => {
@@ -404,7 +404,7 @@ export class CoreHandler {
 	 * Respond to ping from core.
 	 * @param message Response.
 	 */
-	pingResponse(message: string) {
+	pingResponse(message: string): boolean {
 		this.core.setPingResponse(message)
 		return true
 	}

@@ -132,7 +132,7 @@ export type PlaylistCache = Map<PlaylistId, RundownId[]>
 export type RundownCache = Map<RundownId, SegmentId[]>
 export type SegmentCache = Map<SegmentId, ReducedSegment>
 
-export function IsReducedSegment(segment: any): segment is ReducedSegment {
+export function IsReducedSegment(segment: unknown): segment is ReducedSegment {
 	return Object.keys(segment).includes('locator') && !Object.keys(segment).includes('iNewsStory')
 }
 
@@ -223,7 +223,7 @@ export class RundownWatcher extends EventEmitter {
 	/**
 	 * Start the watcher
 	 */
-	startWatcher() {
+	startWatcher(): void {
 		this.logger.info('Clear all watchers')
 		this.stopWatcher()
 		this.logger.info('Start watchers')
@@ -256,23 +256,23 @@ export class RundownWatcher extends EventEmitter {
 	/**
 	 * Stop the watcher
 	 */
-	stopWatcher() {
+	stopWatcher(): void {
 		this.stopPollTimer()
 	}
 
-	private startPollTimer() {
+	private startPollTimer(): void {
 		this.stopPollTimer()
 		this.pollTimer = setTimeout(() => this.watch(), this.pollInterval)
 	}
 
-	private stopPollTimer() {
+	private stopPollTimer(): void {
 		if (this.pollTimer) {
 			clearInterval(this.pollTimer)
 			this.pollTimer = undefined
 		}
 	}
 
-	dispose() {
+	dispose(): void {
 		this.stopWatcher()
 	}
 
@@ -585,27 +585,27 @@ export class RundownWatcher extends EventEmitter {
 		this.emit('rundown_update', rundown.externalId, rundown)
 	}
 
-	private emitRundownMetaDataUpdated(rundown: IngestRundown) {
+	private emitRundownMetaDataUpdated(rundown: IngestRundown): void {
 		this.logger.info(`Emitting rundown metadata update ${rundown.externalId}`)
 		this.emit('rundown_metadata_update', rundown.externalId, rundown)
 	}
 
-	private emitSegmentCreated(rundownId: RundownId, segment: IngestSegment) {
+	private emitSegmentCreated(rundownId: RundownId, segment: IngestSegment): void {
 		this.logger.info(`Emitting segment create ${segment.externalId} in ${rundownId}`)
 		this.emit('segment_create', rundownId, segment.externalId, segment)
 	}
 
-	private emitSegmentUpdated(rundownId: RundownId, segment: IngestSegment) {
+	private emitSegmentUpdated(rundownId: RundownId, segment: IngestSegment): void {
 		this.logger.info(`Emitting segment update ${segment.externalId} in ${rundownId}`)
 		this.emit('segment_update', rundownId, segment.externalId, segment)
 	}
 
-	public emitSegmentDeleted(rundownId: RundownId, segmentId: SegmentId) {
+	public emitSegmentDeleted(rundownId: RundownId, segmentId: SegmentId): void {
 		this.logger.info(`Emitting segment delete ${segmentId} in ${rundownId}`)
 		this.emit('segment_delete', rundownId, segmentId)
 	}
 
-	private emitUpdatedSegmentRanks(rundownId: RundownId, ranks: { [segmentId: string]: number }) {
+	private emitUpdatedSegmentRanks(rundownId: RundownId, ranks: { [segmentId: string]: number }): void {
 		this.logger.info(`Emitting segment ranks update ${rundownId}`)
 		this.emit('segment_ranks_update', rundownId, ranks)
 	}
