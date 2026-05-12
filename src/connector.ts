@@ -65,6 +65,7 @@ export class Connector {
 			this.dispose().catch((e) => this._logger.data(e).error('Error during dispose'))
 
 			setTimeout(() => {
+				// eslint-disable-next-line n/no-process-exit
 				process.exit(0)
 			}, 10 * 1000)
 		}

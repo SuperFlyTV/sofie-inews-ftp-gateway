@@ -1,5 +1,3 @@
-import * as _ from 'underscore'
-
 import { IngestPlaylist, IngestRundown, IngestSegment } from '@sofie-automation/blueprints-integration'
 
 import { ISegment, RundownSegment } from './classes/datastructures/Segment.js'

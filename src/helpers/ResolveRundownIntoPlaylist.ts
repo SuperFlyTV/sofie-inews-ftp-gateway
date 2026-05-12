@@ -28,25 +28,8 @@ export function ResolveRundownIntoPlaylist(
 	}
 
 	const splitRundown = () => {
-		// Note: Disabling rundowns temporarily for v42.0.
+		// Note: Rundowns disabled temporarily for v42.0.
 		return
-		const isAllSegmentsForCurrentRundownEmpty = currentRundown.segments
-			.map((segmentExternalId) => segments.find((segment) => segment.externalId === segmentExternalId))
-			.filter(isSegment)
-			.filter((segment) => !isSegmentFloated(segment))
-			.every(isSegmentEmpty)
-
-		if (currentRundown.segments.length === 0 || isAllSegmentsForCurrentRundownEmpty) return
-
-		resolvedPlaylist.push(currentRundown)
-		rundownIndex++
-		currentRundown = {
-			rundownId: `${playlistExternalId}_${rundownIndex + 1}`,
-			segments: [],
-			payload: {
-				rank: rundownIndex,
-			},
-		}
 	}
 
 	let continuityStoryFound = false
