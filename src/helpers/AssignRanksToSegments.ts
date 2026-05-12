@@ -39,13 +39,14 @@ export function AssignRanksToSegments(
 		}
 
 		logger.debug(`Getting ranks for ${rundown.rundownId}`)
-		let { segmentRanks, recalculatedAsIntegers } = ParsedINewsIntoSegments.GetRanks(
+		const { segmentRanks: initialSegmentRanks, recalculatedAsIntegers } = ParsedINewsIntoSegments.GetRanks(
 			rundown.rundownId,
 			rundown.segments,
 			previousRanks,
 			changesToSegments,
 			logger
 		)
+		let segmentRanks = initialSegmentRanks
 
 		// Check if we should recalculate ranks to integer values from scratch.
 		if (!recalculatedAsIntegers && shouldRecalculateRanks(changes, lastRankRecalculation, rundown, segmentRanks)) {
@@ -84,7 +85,7 @@ function shouldRecalculateRanks(
 ) {
 	let prevRank: number | undefined = undefined
 	let minRank = Number.POSITIVE_INFINITY
-	for (const [_, rank] of segmentRanks) {
+	for (const [_key, rank] of segmentRanks) {
 		if (prevRank !== undefined) {
 			const diffRank = rank - prevRank
 			minRank = Math.min(minRank, diffRank)

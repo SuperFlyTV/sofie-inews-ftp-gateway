@@ -1,6 +1,5 @@
 import * as inews from '@tv2media/inews'
 import { ILogger as Logger } from '@tv2media/logger'
-import * as _ from 'underscore'
 
 import {
 	PeripheralDeviceForDevice,

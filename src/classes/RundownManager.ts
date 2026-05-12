@@ -203,11 +203,11 @@ export class RundownManager {
 				(segment: INewsFTPStoryOrQueue) => (segment as INewsFTPStory).identifier === segmentId
 			)
 
-			if (!segment) return Promise.reject(`Cannot find segment with name ${segmentId}`)
+			if (!segment) return Promise.reject(new Error(`Cannot find segment with name ${segmentId}`))
 
 			return this.downloadINewsStory(queueName, segment)
 		} else {
-			return Promise.reject(`Cannot find rundown with Id ${queueName}`)
+			return Promise.reject(new Error(`Cannot find rundown with Id ${queueName}`))
 		}
 	}
 }
