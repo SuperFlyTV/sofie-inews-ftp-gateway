@@ -4,13 +4,11 @@ export const logger = createDefaultLogger()
 
 export function setupLogger(): void {
 	// Hijack console.log:
-	// @ts-expect-error hijacking console.log
 	if (!process.env.DEV) {
 		const orgConsoleLog = console.log
 		console.log = function (...args: any[]) {
 			if (args.length >= 1) {
 				try {
-					// @ts-expect-error one or more arguments
 					logger.debug(args)
 				} catch (e) {
 					orgConsoleLog('CATCH')
