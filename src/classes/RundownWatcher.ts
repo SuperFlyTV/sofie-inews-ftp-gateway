@@ -133,6 +133,7 @@ export type RundownCache = Map<RundownId, SegmentId[]>
 export type SegmentCache = Map<SegmentId, ReducedSegment>
 
 export function IsReducedSegment(segment: unknown): segment is ReducedSegment {
+	if (typeof segment !== 'object' || segment === null) return false
 	return Object.keys(segment).includes('locator') && !Object.keys(segment).includes('iNewsStory')
 }
 
