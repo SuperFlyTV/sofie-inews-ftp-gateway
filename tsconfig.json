@@ -2,6 +2,7 @@
 	"extends": "./config/tsconfig.base",
 	"exclude": ["node_modules/**", "src/**/*spec.ts", "src/**/__mocks__/*"],
 	"compilerOptions": {
+		"rootDir": "./src",
 		"resolveJsonModule": true,
 		"esModuleInterop": true,
 		"strict": true
