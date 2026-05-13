@@ -72,27 +72,6 @@ export function ResolveRundownIntoPlaylist(
 	return { resolvedPlaylist, untimedSegments }
 }
 
-function _isSegment(segment: UnrankedSegment | undefined): segment is UnrankedSegment {
-	return segment !== undefined
-}
-
-function _isSegmentFloated(segment: UnrankedSegment): boolean {
-	return segment.iNewsStory.meta.float === 'float'
-}
-
-function _isSegmentEmpty(segment: UnrankedSegment): boolean {
-	const isCuesEmpty = segment.iNewsStory.cues.length === 0
-	return isCuesEmpty && isSegmentBodyEmpty(segment)
-}
-
-function isSegmentBodyEmpty(segment: UnrankedSegment): boolean {
-	if (segment.iNewsStory.body === undefined) {
-		return true
-	}
-	const lines = segment.iNewsStory.body.split('\r\n').filter((line) => !/<p>\s*<\/p>|\s*/i.test(line))
-	return lines.length === 0
-}
-
 function isKlarOnAir(segment: UnrankedSegment): boolean {
 	const klarOnAirPattern = /klar[\s-]*on[\s-]*air/im
 	return !!segment.name?.match(klarOnAirPattern)
