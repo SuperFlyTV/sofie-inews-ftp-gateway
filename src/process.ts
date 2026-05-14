@@ -1,6 +1,8 @@
-import { ILogger as Logger } from '@tv2media/logger'
 import { readFile } from 'fs'
 import { promisify } from 'util'
+
+import { ILogger as Logger } from '@tv2media/logger'
+
 import { ProcessConfig } from './connector'
 
 const readFilePromise = promisify(readFile)

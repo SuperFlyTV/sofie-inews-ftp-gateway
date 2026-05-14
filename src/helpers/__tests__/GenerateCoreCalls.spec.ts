@@ -1,10 +1,11 @@
+import { INewsFields, INewsStory } from '@tv2media/inews'
+
+import { UnrankedSegment } from '../../classes/RundownWatcher'
+import { literal } from '../../helpers'
 import { PlaylistChange, PlaylistChangeType } from '../DiffPlaylist'
 import { CoreCall, CoreCallType, GenerateCoreCalls } from '../GenerateCoreCalls'
 import { PlaylistId, SegmentId } from '../id'
 import { ResolvedPlaylist } from '../ResolveRundownIntoPlaylist'
-import { UnrankedSegment } from '../../classes/RundownWatcher'
-import { literal } from '../../helpers'
-import { INewsFields, INewsStory } from '@tv2media/inews'
 
 describe('GenerateCoreCalls', () => {
 	it('generates metaData calls before segment updated calls', () => {

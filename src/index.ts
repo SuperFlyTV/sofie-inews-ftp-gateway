@@ -1,6 +1,7 @@
-import { Connector, Config } from './connector'
-import yargs = require('yargs/yargs')
+import { Config, Connector } from './connector'
 import { ensureLogLevel, logger, setLogLevel, setupLogger } from './logger'
+
+import yargs = require('yargs/yargs')
 
 const argv = yargs(process.argv.slice(2))
 	.options({
@@ -39,7 +40,7 @@ if (!certs.length) {
 let debug: boolean = argv.debug
 
 setupLogger()
-const logLevel = debug ? 'debug' : ensureLogLevel(process.env.LOG_LEVEL) ?? 'warn'
+const logLevel = debug ? 'debug' : (ensureLogLevel(process.env.LOG_LEVEL) ?? 'warn')
 setLogLevel(logLevel)
 
 // Because the default NodeJS-handler sucks and wont display error properly

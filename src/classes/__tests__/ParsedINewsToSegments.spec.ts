@@ -1,20 +1,19 @@
+import { GetDeletedSegments, GetInsertedSegments, GetMovedSegments } from '../../helpers/GetMovedSegments'
+import { SegmentId } from '../../helpers/id'
 import { ParsedINewsIntoSegments } from '../ParsedINewsToSegments'
-
+import { ReducedSegment } from '../RundownWatcher'
 import {
+	makeSegmentRanks,
+	makeSegmentRanksInner,
 	segmentGW01,
 	segmentGW02,
 	segmentGW03,
 	segmentGW04,
-	segmentGW08,
 	segmentGW05,
 	segmentGW06,
 	segmentGW07,
-	makeSegmentRanksInner,
-	makeSegmentRanks,
+	segmentGW08,
 } from './__mocks__/mockSegments'
-import { ReducedSegment } from '../RundownWatcher'
-import { GetDeletedSegments, GetInsertedSegments, GetMovedSegments } from '../../helpers/GetMovedSegments'
-import { SegmentId } from '../../helpers/id'
 
 describe('ParsedINewsIntoSegments', () => {
 	it('Finds the the next available rank', () => {
@@ -562,7 +561,16 @@ describe('ParsedINewsIntoSegments', () => {
 		})
 
 		const segmentChanges = GetMovedSegments(
-			['segment-05', 'segment-02', 'segment-01', 'segment-04', 'segment-03', 'segment-07', 'segment-08', 'segment-06'],
+			[
+				'segment-05',
+				'segment-02',
+				'segment-01',
+				'segment-04',
+				'segment-03',
+				'segment-07',
+				'segment-08',
+				'segment-06',
+			],
 			iNewsRaw.map((s) => s.externalId)
 		)
 		const result = ParsedINewsIntoSegments.GetRanks(
@@ -635,7 +643,16 @@ describe('ParsedINewsIntoSegments', () => {
 		})
 
 		let segmentChanges = GetMovedSegments(
-			['segment-05', 'segment-02', 'segment-01', 'segment-04', 'segment-03', 'segment-07', 'segment-08', 'segment-06'],
+			[
+				'segment-05',
+				'segment-02',
+				'segment-01',
+				'segment-04',
+				'segment-03',
+				'segment-07',
+				'segment-08',
+				'segment-06',
+			],
 			iNewsRaw.map((s) => s.externalId)
 		)
 		let result = ParsedINewsIntoSegments.GetRanks(
@@ -706,7 +723,16 @@ describe('ParsedINewsIntoSegments', () => {
 		})
 
 		let segmentChanges2 = GetMovedSegments(
-			['segment-05', 'segment-02', 'segment-01', 'segment-04', 'segment-03', 'segment-07', 'segment-08', 'segment-06'],
+			[
+				'segment-05',
+				'segment-02',
+				'segment-01',
+				'segment-04',
+				'segment-03',
+				'segment-07',
+				'segment-08',
+				'segment-06',
+			],
 			iNewsRaw.map((s) => s.externalId)
 		)
 		result = ParsedINewsIntoSegments.GetRanks(
@@ -754,7 +780,16 @@ describe('ParsedINewsIntoSegments', () => {
 			},
 		])
 
-		iNewsRaw = [segmentGW05, segmentGW01, segmentGW04, segmentGW02, segmentGW03, segmentGW08, segmentGW06, segmentGW07]
+		iNewsRaw = [
+			segmentGW05,
+			segmentGW01,
+			segmentGW04,
+			segmentGW02,
+			segmentGW03,
+			segmentGW08,
+			segmentGW06,
+			segmentGW07,
+		]
 
 		previousRanks = makeSegmentRanks({
 			'segment-05': { rank: 1000 },
@@ -768,7 +803,16 @@ describe('ParsedINewsIntoSegments', () => {
 		})
 
 		const segmentChanges3 = GetMovedSegments(
-			['segment-05', 'segment-01', 'segment-02', 'segment-04', 'segment-03', 'segment-07', 'segment-08', 'segment-06'],
+			[
+				'segment-05',
+				'segment-01',
+				'segment-02',
+				'segment-04',
+				'segment-03',
+				'segment-07',
+				'segment-08',
+				'segment-06',
+			],
 			iNewsRaw.map((s) => s.externalId)
 		)
 		result = ParsedINewsIntoSegments.GetRanks(

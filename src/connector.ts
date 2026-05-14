@@ -1,15 +1,17 @@
-import { InewsFTPHandler, INewsDeviceSettings } from './inewsHandler'
-import { CoreHandler, CoreConfig } from './coreHandler'
+import { ILogger as Logger } from '@tv2media/logger'
 import * as _ from 'underscore'
-import { Process } from './process'
+
 import {
 	Observer,
-	PeripheralDeviceId,
 	PeripheralDeviceForDevice,
+	PeripheralDeviceId,
 	PeripheralDevicePubSubCollectionsNames,
 } from '@sofie-automation/server-core-integration'
+
+import { CoreConfig, CoreHandler } from './coreHandler'
+import { INewsDeviceSettings, InewsFTPHandler } from './inewsHandler'
 import { ensureLogLevel, setLogLevel } from './logger'
-import { ILogger as Logger } from '@tv2media/logger'
+import { Process } from './process'
 
 export interface Config {
 	process: ProcessConfig
@@ -97,7 +99,9 @@ export class Connector {
 
 		let addedChanged = (id: PeripheralDeviceId) => {
 			// Check that collection exists.
-			let devices = this.coreHandler.core.getCollection(PeripheralDevicePubSubCollectionsNames.peripheralDeviceForDevice)
+			let devices = this.coreHandler.core.getCollection(
+				PeripheralDevicePubSubCollectionsNames.peripheralDeviceForDevice
+			)
 			if (!devices) throw Error('"peripheralDeviceForDevice" collection not found!')
 
 			// Find studio ID.
@@ -121,7 +125,7 @@ export class Connector {
 
 				if (settings.debug !== undefined && settings.debug !== this._debug) {
 					this._debug = settings.debug
-					const logLevel = this._debug ? 'debug' : ensureLogLevel(process.env.LOG_LEVEL) ?? 'warn'
+					const logLevel = this._debug ? 'debug' : (ensureLogLevel(process.env.LOG_LEVEL) ?? 'warn')
 					setLogLevel(logLevel)
 				}
 

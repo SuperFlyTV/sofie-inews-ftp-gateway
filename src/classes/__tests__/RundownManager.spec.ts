@@ -1,5 +1,5 @@
-import { RundownManager } from '../RundownManager'
 import { INewsStoryGW } from '../datastructures/Segment'
+import { RundownManager } from '../RundownManager'
 
 const LAYOUT: string = 'n'
 
