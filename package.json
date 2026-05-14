@@ -93,7 +93,7 @@
   "devDependencies": {
     "@sofie-automation/code-standard-preset": "3.2.2-nightly-main-20260514-075715-1e2f3f5",
     "@types/dotenv": "^6.1.1",
-    "@types/jest": "^24.0.11",
+    "@types/jest": "^30.0.0",
     "@types/node": "^20.0.0",
     "@types/underscore": "^1.8.13",
     "@types/xml2js": "^0.4.4",
@@ -101,7 +101,7 @@
     "codecov": "^3.6.1",
     "eslint": "^10.3.0",
     "husky": "^9.1.7",
-    "jest": "^24.5.0",
+    "jest": "^30.4.2",
     "lint-staged": "^17.0.4",
     "node-license-validator": "^1.3.0",
     "npm-scripts-info": "^0.3.9",
@@ -109,7 +109,7 @@
     "prettier": "^3.8.3",
     "standard-version": "^9.0.0",
     "trash-cli": "^5.0.0",
-    "ts-jest": "^26.4.1",
+    "ts-jest": "^29.4.9",
     "typescript": "^6.0.3"
   },
   "standard-version": {
