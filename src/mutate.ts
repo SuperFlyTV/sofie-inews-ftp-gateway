@@ -2,9 +2,9 @@ import * as _ from 'underscore'
 
 import { IngestPlaylist, IngestRundown, IngestSegment } from '@sofie-automation/blueprints-integration'
 
-import { ISegment, RundownSegment } from './classes/datastructures/Segment'
-import { ReducedPlaylist, ReducedRundown } from './classes/RundownWatcher'
-import { parseModifiedDateFromIngestSegmentWithFallbackToNow } from './helpers'
+import { ISegment, RundownSegment } from './classes/datastructures/Segment.js'
+import { ReducedPlaylist, ReducedRundown } from './classes/RundownWatcher.js'
+import { parseModifiedDateFromIngestSegmentWithFallbackToNow } from './helpers.js'
 
 export const INGEST_RUNDOWN_TYPE = 'inews'
 
@@ -68,7 +68,7 @@ interface IOmit {
 }
 
 const omit: IOmit = (obj, ...keys) => {
-	let ret = {} as {
+	const ret = {} as {
 		[K in keyof typeof obj]: (typeof obj)[K]
 	}
 	let key: keyof typeof obj

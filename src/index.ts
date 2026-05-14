@@ -1,5 +1,5 @@
-import { Config, Connector } from './connector'
-import { ensureLogLevel, logger, setLogLevel, setupLogger } from './logger'
+import { Config, Connector } from './connector.js'
+import { ensureLogLevel, logger, setLogLevel, setupLogger } from './logger.js'
 
 import yargs = require('yargs/yargs')
 
@@ -26,18 +26,18 @@ const argv = yargs(process.argv.slice(2))
 	.help('help').argv
 
 // CLI arguments / Environment variables
-let host: string = process.env.CORE_HOST ?? argv.host
-let port: number = parseInt(process.env.CORE_PORT + '', 10) || argv.port
-let logPath: string = process.env.CORE_LOG ?? argv.log ?? ''
-let deviceId: string = process.env.DEVICE_ID ?? argv.id ?? ''
-let deviceToken: string = process.env.DEVICE_TOKEN ?? argv.token ?? ''
-let disableWatchdog: boolean = process.env.DISABLE_WATCHDOG === '1' || argv.disableWatchdog
-let unsafeSSL: boolean = process.env.UNSAFE_SSL === '1' || argv.unsafeSSL
+const host: string = process.env.CORE_HOST ?? argv.host
+const port: number = parseInt(process.env.CORE_PORT + '', 10) || argv.port
+const logPath: string = process.env.CORE_LOG ?? argv.log ?? ''
+const deviceId: string = process.env.DEVICE_ID ?? argv.id ?? ''
+const deviceToken: string = process.env.DEVICE_TOKEN ?? argv.token ?? ''
+const disableWatchdog: boolean = process.env.DISABLE_WATCHDOG === '1' || argv.disableWatchdog
+const unsafeSSL: boolean = process.env.UNSAFE_SSL === '1' || argv.unsafeSSL
 let certs: string[] = process.env.CERTIFICATES ? process.env.CERTIFICATES.split(';').filter((c) => c && c.length) : []
 if (!certs.length) {
 	certs = argv.certificates ?? []
 }
-let debug: boolean = argv.debug
+const debug: boolean = argv.debug
 
 setupLogger()
 const logLevel = debug ? 'debug' : (ensureLogLevel(process.env.LOG_LEVEL) ?? 'warn')
@@ -66,7 +66,7 @@ logger.info(`unsafeSSL: ${unsafeSSL}`)
 logger.info('-----------------------------------')
 
 // App config
-let config: Config = {
+const config: Config = {
 	process: {
 		unsafeSSL: unsafeSSL,
 		certificates: certs,
@@ -82,7 +82,7 @@ let config: Config = {
 	},
 }
 
-let c = new Connector(logger, config, debug)
+const c = new Connector(logger, config, debug)
 
 logger.info(`Core: ${config.core.host}:${config.core.port}`)
 logger.info('-----------------------------------')

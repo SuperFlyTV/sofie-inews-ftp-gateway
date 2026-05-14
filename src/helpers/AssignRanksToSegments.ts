@@ -1,9 +1,9 @@
-import { ParsedINewsIntoSegments, SegmentRankings, SegmentRankingsInner } from '../classes/ParsedINewsToSegments'
-import { literal } from '../helpers'
-import { logger } from '../logger'
-import { PlaylistChange, PlaylistChangeSegmentMoved, PlaylistChangeType, SegmentChangesMap } from './DiffPlaylist'
-import { RundownId, SegmentId } from './id'
-import { ResolvedPlaylist, ResolvedPlaylistRundown } from './ResolveRundownIntoPlaylist'
+import { ParsedINewsIntoSegments, SegmentRankings, SegmentRankingsInner } from '../classes/ParsedINewsToSegments.js'
+import { literal } from '../helpers.js'
+import { logger } from '../logger.js'
+import { PlaylistChange, PlaylistChangeSegmentMoved, PlaylistChangeType, SegmentChangesMap } from './DiffPlaylist.js'
+import { RundownId, SegmentId } from './id.js'
+import { ResolvedPlaylist, ResolvedPlaylistRundown } from './ResolveRundownIntoPlaylist.js'
 
 const RECALCULATE_RANKS_CHANGE_THRESHOLD = 50
 const MAX_TIME_BEFORE_RECALCULATE_RANKS = 60 * 60 * 1000 // One hour
@@ -22,8 +22,8 @@ export function AssignRanksToSegments(
 		recalculatedAsIntegers: boolean
 	}> = []
 
-	for (let rundown of playlistAssignments) {
-		let assignedRanks: Map<SegmentId, number> = new Map()
+	for (const rundown of playlistAssignments) {
+		const assignedRanks: Map<SegmentId, number> = new Map()
 		let recalculated: boolean = false
 
 		const changesToSegments = segmentChanges.get(rundown.rundownId)
@@ -62,7 +62,7 @@ export function AssignRanksToSegments(
 		}
 
 		// Store ranks
-		for (let [segmentId, rank] of segmentRanks) {
+		for (const [segmentId, rank] of segmentRanks) {
 			assignedRanks.set(segmentId, rank)
 		}
 
@@ -105,7 +105,7 @@ function generateMoveChanges(
 	changes: PlaylistChange[],
 	rundown: ResolvedPlaylistRundown
 ) {
-	for (let [segmentId, rank] of segmentRanks) {
+	for (const [segmentId, rank] of segmentRanks) {
 		const previousRank = rundownPreviousRanks.get(segmentId)
 
 		if (!previousRank) {

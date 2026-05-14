@@ -24,17 +24,17 @@ import {
 	PeripheralDeviceType,
 } from '@sofie-automation/shared-lib/dist/peripheralDevice/peripheralDeviceAPI'
 
-import { INewsRundown } from './classes/datastructures/Rundown'
-import { ISegment, RundownSegment } from './classes/datastructures/Segment'
-import { ReducedRundown } from './classes/RundownWatcher'
-import { INEWS_DEVICE_CONFIG_MANIFEST } from './configManifest'
-import { DeviceConfig } from './connector'
-import { ReflectPromise } from './helpers'
-import { RundownId, SegmentId } from './helpers/id'
-import { InewsFTPHandler } from './inewsHandler'
-import { IngestSegmentToRundownSegment } from './mutate'
-import { Process } from './process'
-import { VersionIsCompatible } from './version'
+import { INewsRundown } from './classes/datastructures/Rundown.js'
+import { ISegment, RundownSegment } from './classes/datastructures/Segment.js'
+import { ReducedRundown } from './classes/RundownWatcher.js'
+import { INEWS_DEVICE_CONFIG_MANIFEST } from './configManifest.js'
+import { DeviceConfig } from './connector.js'
+import { ReflectPromise } from './helpers.js'
+import { RundownId, SegmentId } from './helpers/id.js'
+import { InewsFTPHandler } from './inewsHandler.js'
+import { IngestSegmentToRundownSegment } from './mutate.js'
+import { Process } from './process.js'
+import { VersionIsCompatible } from './version.js'
 
 export interface CoreConfig {
 	host: string
@@ -84,7 +84,7 @@ export class CoreHandler {
 			this.setStatus(StatusCode.BAD, ['Core error'])
 		})
 
-		let ddpConfig: DDPConnectorOptions = {
+		const ddpConfig: DDPConnectorOptions = {
 			host: config.host,
 			port: config.port,
 		}
@@ -135,7 +135,7 @@ export class CoreHandler {
 	 */
 	getCoreConnectionOptions(deviceOptions: DeviceConfig): CoreOptions {
 		const deviceId = deviceOptions.deviceId || DEVICE_NAME.replace(/\s/g, '')
-		let options: CoreOptions = {
+		const options: CoreOptions = {
 			deviceId: protectString(deviceId),
 			deviceToken: deviceOptions.deviceToken,
 			deviceCategory: PeripheralDeviceCategory.INGEST,
@@ -185,7 +185,7 @@ export class CoreHandler {
 		this._subscriptions = []
 
 		this.logger.info(`Core: Setting up subscriptions for ${this.core.deviceId}..`)
-		let subs = await Promise.all([
+		const subs = await Promise.all([
 			this.core.autoSubscribe(PeripheralDevicePubSub.peripheralDeviceForDevice, this.core.deviceId),
 			this.core.autoSubscribe(PeripheralDevicePubSub.peripheralDeviceCommands, this.core.deviceId),
 		])
@@ -221,7 +221,7 @@ export class CoreHandler {
 						])
 						break
 					case 'pingResponse':
-						let pingResponseResult = await Promise.resolve(this.pingResponse(commandArg))
+						const pingResponseResult = await Promise.resolve(this.pingResponse(commandArg))
 						success = true
 						await this.core.callMethodRaw(PeripheralDeviceAPIMethods.functionReply, [
 							cmd._id,
@@ -230,7 +230,9 @@ export class CoreHandler {
 						])
 						break
 					case 'retireExecuteFunction':
-						let retireExecuteFunctionResult = await Promise.resolve(this.retireExecuteFunction(commandArg))
+						const retireExecuteFunctionResult = await Promise.resolve(
+							this.retireExecuteFunction(commandArg)
+						)
 						success = true
 						await this.core.callMethodRaw(PeripheralDeviceAPIMethods.functionReply, [
 							cmd._id,
@@ -239,7 +241,7 @@ export class CoreHandler {
 						])
 						break
 					case 'killProcess':
-						let killProcessFunctionResult = await Promise.resolve(this.killProcess(commandArg))
+						const killProcessFunctionResult = await Promise.resolve(this.killProcess(commandArg))
 						success = true
 						await this.core.callMethodRaw(PeripheralDeviceAPIMethods.functionReply, [
 							cmd._id,
@@ -248,7 +250,7 @@ export class CoreHandler {
 						])
 						break
 					case 'getSnapshot':
-						let getSnapshotResult = await Promise.resolve(this.getSnapshot())
+						const getSnapshotResult = await Promise.resolve(this.getSnapshot())
 						success = true
 						await this.core.callMethodRaw(PeripheralDeviceAPIMethods.functionReply, [
 							cmd._id,
@@ -284,7 +286,7 @@ export class CoreHandler {
 	// Made async as it does async work ...
 	setupObserverForPeripheralDeviceCommands() {
 		this.logger.info(`Core: Setting up observers for peripheral device commands on ${this.core.deviceId}..`)
-		let observer = this.core.observe(PeripheralDevicePubSubCollectionsNames.peripheralDeviceCommands)
+		const observer = this.core.observe(PeripheralDevicePubSubCollectionsNames.peripheralDeviceCommands)
 		this.killProcess(0) // just make sure it exists
 		this._observers.push(observer)
 
@@ -293,10 +295,10 @@ export class CoreHandler {
 		 * @param {string} id Command id to execute.
 		 */
 		// Note: Oberver is not expecting a promise.
-		let addedChangedCommand = (id: PeripheralDeviceCommandId): void => {
-			let cmds = this.core.getCollection(PeripheralDevicePubSubCollectionsNames.peripheralDeviceCommands)
+		const addedChangedCommand = (id: PeripheralDeviceCommandId): void => {
+			const cmds = this.core.getCollection(PeripheralDevicePubSubCollectionsNames.peripheralDeviceCommands)
 			if (!cmds) throw Error('"peripheralDeviceCommands" collection not found!')
-			let cmd = cmds.findOne(id)
+			const cmd = cmds.findOne(id)
 			if (!cmd) throw Error('PeripheralCommand "' + id + '" not found!')
 			if (cmd.deviceId === this.core.deviceId) {
 				this.executeFunction(cmd).catch((e) =>
@@ -320,11 +322,11 @@ export class CoreHandler {
 	 */
 	async executePeripheralDeviceCommands(): Promise<void> {
 		this.logger.info(`Core: Execute peripheral device commands on ${this.core.deviceId}..`)
-		let cmds = this.core.getCollection(PeripheralDevicePubSubCollectionsNames.peripheralDeviceCommands)
+		const cmds = this.core.getCollection(PeripheralDevicePubSubCollectionsNames.peripheralDeviceCommands)
 		if (!cmds) throw Error('"peripheralDeviceCommands" collection not found!')
 		await Promise.all(
-			cmds.find({}).map((cmd0) => {
-				let cmd = cmd0 as PeripheralDeviceCommand
+			cmds.find({}).map(async (cmd0) => {
+				const cmd = cmd0
 				if (cmd.deviceId === this.core.deviceId) {
 					return this.executeFunction(cmd)
 				}
@@ -339,17 +341,17 @@ export class CoreHandler {
 	setupObserverForPeripheralDevices() {
 		this.logger.info(`Core: Setting up observers for peripheral devices on ${this.core.deviceId}..`)
 		// Setup observer.
-		let observer = this.core.observe(PeripheralDevicePubSubCollectionsNames.peripheralDeviceForDevice)
+		const observer = this.core.observe(PeripheralDevicePubSubCollectionsNames.peripheralDeviceForDevice)
 		this.killProcess(0)
 		this._observers.push(observer)
 
-		let addedChanged = (id: PeripheralDeviceId) => {
+		const addedChanged = (id: PeripheralDeviceId) => {
 			// Check that collection exists.
-			let devices = this.core.getCollection(PeripheralDevicePubSubCollectionsNames.peripheralDeviceForDevice)
+			const devices = this.core.getCollection(PeripheralDevicePubSubCollectionsNames.peripheralDeviceForDevice)
 			if (!devices) throw Error('"peripheralDeviceForDevice" collection not found!')
 
 			// Find studio ID.
-			let dev = devices.findOne(id)
+			const dev = devices.findOne(id)
 			if (dev && 'studioId' in dev) {
 				if (dev['studioId'] !== this._studioId) {
 					this._studioId = dev['studioId']
@@ -425,21 +427,21 @@ export class CoreHandler {
 	 */
 	// Allowing sync methods here as only called during initialization
 	private _getVersions() {
-		let versions: { [packageName: string]: string } = {}
+		const versions: { [packageName: string]: string } = {}
 
 		if (process.env.npm_package_version) {
 			versions['_process'] = process.env.npm_package_version
 		}
 
-		let dirNames = ['@sofie-automation/server-core-integration']
+		const dirNames = ['@sofie-automation/server-core-integration']
 		try {
-			let nodeModulesDirectories = fs.readdirSync('node_modules')
+			const nodeModulesDirectories = fs.readdirSync('node_modules')
 			_.each(nodeModulesDirectories, (dir) => {
 				try {
 					if (dirNames.indexOf(dir) !== -1) {
 						let file = 'node_modules/' + dir + '/package.json'
 						file = fs.readFileSync(file, 'utf8')
-						let json = JSON.parse(file)
+						const json = JSON.parse(file)
 						versions[dir] = json.version || 'N/A'
 					}
 				} catch (e) {
@@ -457,7 +459,7 @@ export class CoreHandler {
 		const res: IngestPlaylist[] = []
 
 		const ps: Array<Promise<IngestPlaylist>> = []
-		for (let id of playlistExternalIds) {
+		for (const id of playlistExternalIds) {
 			this.logger.debug(`Getting cache for playlist ${id}`)
 			ps.push(this.core.callMethodRaw(PeripheralDeviceAPIMethods.dataPlaylistGet, [id]))
 		}
@@ -482,7 +484,7 @@ export class CoreHandler {
 		const res: IngestRundown<INewsRundown>[] = []
 
 		const ps: Array<Promise<IngestRundown<INewsRundown>>> = []
-		for (let id of rundownExternalIds) {
+		for (const id of rundownExternalIds) {
 			this.logger.debug(`Getting cache for rundown ${id}`)
 			ps.push(this.core.callMethodRaw(PeripheralDeviceAPIMethods.dataRundownGet, [id]))
 		}
@@ -514,7 +516,7 @@ export class CoreHandler {
 
 		const cachedSegments: IngestSegment<ISegment>[] = []
 		const ps: Array<Promise<IngestSegment<ISegment>>> = []
-		for (let id of segmentExternalIds) {
+		for (const id of segmentExternalIds) {
 			ps.push(this.core.callMethodRaw(PeripheralDeviceAPIMethods.dataSegmentGet, [rundownExternalId, id]))
 		}
 

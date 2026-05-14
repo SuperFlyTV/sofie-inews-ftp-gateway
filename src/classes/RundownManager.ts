@@ -1,11 +1,11 @@
 import { INewsClient, INewsFTPStory, INewsFTPStoryOrQueue, INewsStory } from '@tv2media/inews'
 import { ILogger as Logger } from '@tv2media/logger'
 
-import { literal, parseModifiedDateFromInewsStoryWithFallbackToNow, ReflectPromise } from '../helpers'
-import { SegmentId } from '../helpers/id'
-import { VERSION } from '../version'
-import { INewsStoryGW } from './datastructures/Segment'
-import { ReducedRundown, ReducedSegment, UnrankedSegment } from './RundownWatcher'
+import { literal, parseModifiedDateFromInewsStoryWithFallbackToNow, ReflectPromise } from '../helpers.js'
+import { SegmentId } from '../helpers/id.js'
+import { VERSION } from '../version.js'
+import { INewsStoryGW } from './datastructures/Segment.js'
+import { ReducedRundown, ReducedSegment, UnrankedSegment } from './RundownWatcher.js'
 
 function isStory(f: INewsFTPStoryOrQueue): f is INewsFTPStory {
 	return f.filetype === 'story'
@@ -45,7 +45,7 @@ export class RundownManager {
 			segments: [],
 		}
 		try {
-			let dirList = await this._listStories(queueName)
+			const dirList = await this._listStories(queueName)
 			dirList.forEach((ftpFileName: INewsFTPStoryOrQueue, index) => {
 				if (isStory(ftpFileName)) {
 					rundown.segments.push(
@@ -177,7 +177,7 @@ export class RundownManager {
 	 * Adds a cue to the story. Returns the index of the newly added cue.
 	 */
 	private addCueToStory(story: INewsStory, cueKey: string): number {
-		story.cues.push([`${cueKey}=${story.fields.layout!.value!.toUpperCase()}`])
+		story.cues.push([`${cueKey}=${story.fields.layout!.value.toUpperCase()}`])
 		return story.cues.length - 1
 	}
 

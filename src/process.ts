@@ -3,7 +3,7 @@ import { promisify } from 'util'
 
 import { ILogger as Logger } from '@tv2media/logger'
 
-import { ProcessConfig } from './connector'
+import { ProcessConfig } from './connector.js'
 
 const readFilePromise = promisify(readFile)
 
@@ -28,7 +28,7 @@ export class Process {
 			this.certificates = await Promise.all(
 				processConfig.certificates.map(async (certificate) => {
 					try {
-						let certData = await readFilePromise(certificate)
+						const certData = await readFilePromise(certificate)
 						this.logger.info(`Using certificate "${certificate}"`)
 						return certData
 					} catch (error) {

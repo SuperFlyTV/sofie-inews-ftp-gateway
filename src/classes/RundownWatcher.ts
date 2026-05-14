@@ -8,18 +8,18 @@ import * as dotenv from 'dotenv'
 import { IngestPlaylist, IngestRundown, IngestSegment } from '@sofie-automation/blueprints-integration'
 import { StatusCode } from '@sofie-automation/shared-lib/dist/lib/status'
 
-import { CoreHandler } from '../coreHandler'
-import { assertUnreachable } from '../helpers'
-import { AssignRanksToSegments } from '../helpers/AssignRanksToSegments'
-import { DiffPlaylist } from '../helpers/DiffPlaylist'
-import { CoreCallType, GenerateCoreCalls } from '../helpers/GenerateCoreCalls'
-import { PlaylistId, RundownId, SegmentId } from '../helpers/id'
-import { ResolvedPlaylist, ResolveRundownIntoPlaylist } from '../helpers/ResolveRundownIntoPlaylist'
-import { InewsFTPHandler } from '../inewsHandler'
-import { INewsRundown } from './datastructures/Rundown'
-import { ISegment, RundownSegment } from './datastructures/Segment'
-import { SegmentRankings, SegmentRankingsInner } from './ParsedINewsToSegments'
-import { RundownManager } from './RundownManager'
+import { CoreHandler } from '../coreHandler.js'
+import { assertUnreachable } from '../helpers.js'
+import { AssignRanksToSegments } from '../helpers/AssignRanksToSegments.js'
+import { DiffPlaylist } from '../helpers/DiffPlaylist.js'
+import { CoreCallType, GenerateCoreCalls } from '../helpers/GenerateCoreCalls.js'
+import { PlaylistId, RundownId, SegmentId } from '../helpers/id.js'
+import { ResolvedPlaylist, ResolveRundownIntoPlaylist } from '../helpers/ResolveRundownIntoPlaylist.js'
+import { InewsFTPHandler } from '../inewsHandler.js'
+import { INewsRundown } from './datastructures/Rundown.js'
+import { ISegment, RundownSegment } from './datastructures/Segment.js'
+import { SegmentRankings, SegmentRankingsInner } from './ParsedINewsToSegments.js'
+import { RundownManager } from './RundownManager.js'
 
 dotenv.config()
 
@@ -318,7 +318,7 @@ export class RundownWatcher extends EventEmitter {
 	}
 
 	async checkINewsRundowns(): Promise<void> {
-		for (let queue of this.iNewsQueue) {
+		for (const queue of this.iNewsQueue) {
 			await this.checkINewsRundownById(queue)
 		}
 	}
@@ -350,7 +350,7 @@ export class RundownWatcher extends EventEmitter {
 		if (cachedPlaylist) {
 			const cachedRundowns: Array<{ externalId: RundownId; segmentIds: SegmentId[] }> = []
 			for (const rundownId of cachedPlaylist) {
-				let cachedRundown = this.rundowns.get(rundownId)
+				const cachedRundown = this.rundowns.get(rundownId)
 				if (!cachedRundown) continue
 				cachedRundowns.push({ externalId: rundownId, segmentIds: cachedRundown })
 			}
@@ -377,7 +377,7 @@ export class RundownWatcher extends EventEmitter {
 
 		const iNewsData = await iNewsDataPs
 
-		for (let [externalId, data] of iNewsData.entries()) {
+		for (const [externalId, data] of iNewsData.entries()) {
 			this.cachedINewsData.set(externalId, data)
 		}
 
@@ -430,8 +430,8 @@ export class RundownWatcher extends EventEmitter {
 
 		const ingestCacheData: Map<SegmentId, RundownSegment> = new Map()
 
-		for (let cache of ingestCacheList) {
-			for (let [segmentId, data] of cache) {
+		for (const cache of ingestCacheList) {
+			for (const [segmentId, data] of cache) {
 				ingestCacheData.set(segmentId, data)
 			}
 		}
@@ -483,7 +483,7 @@ export class RundownWatcher extends EventEmitter {
 		this.cachedPlaylistAssignments.set(playlistId, playlistAssignments)
 		this.cachedAssignedRundowns.set(playlistId, assignedRundowns)
 
-		let segmentRanks = AssignRanksToSegments(
+		const segmentRanks = AssignRanksToSegments(
 			playlistAssignments,
 			changes,
 			segmentChanges,
@@ -557,7 +557,7 @@ export class RundownWatcher extends EventEmitter {
 
 	private updatePreviousRanks(rundownId: RundownId, segments: Map<SegmentId, number>) {
 		const ranksMap: Map<SegmentId, SegmentRankingsInner> = new Map()
-		for (let [segmentId, rank] of segments) {
+		for (const [segmentId, rank] of segments) {
 			ranksMap.set(segmentId, {
 				rank,
 			})

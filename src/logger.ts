@@ -1,12 +1,12 @@
 import { createDefaultLogger, Level } from '@tv2media/logger'
 
-export let logger = createDefaultLogger()
+export const logger = createDefaultLogger()
 
 export function setupLogger() {
 	// Hijack console.log:
 	// @ts-ignore
 	if (!process.env.DEV) {
-		let orgConsoleLog = console.log
+		const orgConsoleLog = console.log
 		console.log = function (...args: any[]) {
 			if (args.length >= 1) {
 				try {
