@@ -87,6 +87,7 @@
     "ansi-regex": "^5.0.1"
   },
   "devDependencies": {
+    "@sofie-automation/code-standard-preset": "3.2.2-nightly-main-20260514-075715-1e2f3f5",
     "@types/dotenv": "^6.1.1",
     "@types/jest": "^24.0.11",
     "@types/node": "^20.0.0",
