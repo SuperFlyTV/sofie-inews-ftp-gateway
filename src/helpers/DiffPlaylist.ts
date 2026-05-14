@@ -1,8 +1,8 @@
-import { INewsRundown } from '../classes/datastructures/Rundown'
-import { literal } from '../helpers'
-import { logger } from '../logger'
-import { GetMovedSegments } from './GetMovedSegments'
-import { RundownId, SegmentId } from './id'
+import { INewsRundown } from '../classes/datastructures/Rundown.js'
+import { literal } from '../helpers.js'
+import { logger } from '../logger.js'
+import { GetMovedSegments } from './GetMovedSegments.js'
+import { RundownId, SegmentId } from './id.js'
 
 export enum PlaylistChangeType {
 	PlaylistChangeSegmentDeleted = 'segment_deleted',
@@ -91,12 +91,12 @@ export function DiffPlaylist(
 	changes: PlaylistChange[]
 	segmentChanges: SegmentChangesMap
 } {
-	let changes: PlaylistChange[] = []
-	let segmentChanges: SegmentChangesMap = new Map()
-	let updatedRundownMetaData: Set<RundownId> = new Set()
+	const changes: PlaylistChange[] = []
+	const segmentChanges: SegmentChangesMap = new Map()
+	const updatedRundownMetaData: Set<RundownId> = new Set()
 
-	for (let rundown of previous) {
-		let newRundown = playlist.find((p) => p.externalId === rundown.externalId)
+	for (const rundown of previous) {
+		const newRundown = playlist.find((p) => p.externalId === rundown.externalId)
 		if (!newRundown) {
 			logger.debug(`Diff: Rundown ${rundown.externalId} deleted`)
 			changes.push(
@@ -116,7 +116,7 @@ export function DiffPlaylist(
 		}
 	}
 
-	for (let rundown of playlist) {
+	for (const rundown of playlist) {
 		const prevRundown = previous.find((p) => p.externalId === rundown.externalId)
 		if (!prevRundown) {
 			logger.debug(`Diff: Rundown ${rundown.externalId} created`)
@@ -146,11 +146,11 @@ export function DiffPlaylist(
 			updatedRundownMetaData.add(rundown.externalId)
 		}
 
-		let { movedSegments, notMovedSegments, insertedSegments, deletedSegments } = GetMovedSegments(
+		const { movedSegments, notMovedSegments, insertedSegments, deletedSegments } = GetMovedSegments(
 			prevRundown.segments.map((s) => s.externalId),
 			rundown.segments.map((s) => s.externalId)
 		)
-		let changedSegments: SegmentId[] = []
+		const changedSegments: SegmentId[] = []
 
 		movedSegments.forEach((s) => {
 			logger.debug(`Diff: Segment ${s} moved`)

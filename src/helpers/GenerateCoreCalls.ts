@@ -1,10 +1,10 @@
 import { IngestRundown, IngestSegment } from '@sofie-automation/blueprints-integration'
 
-import { RundownSegment } from '../classes/datastructures/Segment'
-import { UnrankedSegment } from '../classes/RundownWatcher'
-import { literal } from '../helpers'
-import { logger } from '../logger'
-import { INGEST_RUNDOWN_TYPE, MutatedSegment } from '../mutate'
+import { RundownSegment } from '../classes/datastructures/Segment.js'
+import { UnrankedSegment } from '../classes/RundownWatcher.js'
+import { literal } from '../helpers.js'
+import { logger } from '../logger.js'
+import { INGEST_RUNDOWN_TYPE, MutatedSegment } from '../mutate.js'
 import {
 	PlaylistChange,
 	PlaylistChangeSegmentChanged,
@@ -12,9 +12,9 @@ import {
 	PlaylistChangeSegmentDeleted,
 	PlaylistChangeSegmentMoved,
 	PlaylistChangeType,
-} from './DiffPlaylist'
-import { PlaylistId, RundownId, SegmentId } from './id'
-import { ResolvedPlaylist, ResolvedPlaylistRundown } from './ResolveRundownIntoPlaylist'
+} from './DiffPlaylist.js'
+import { PlaylistId, RundownId, SegmentId } from './id.js'
+import { ResolvedPlaylist, ResolvedPlaylistRundown } from './ResolveRundownIntoPlaylist.js'
 
 export enum CoreCallType {
 	dataSegmentCreate = 'dataSegmentCreate',
@@ -154,11 +154,11 @@ function createSegmentMovedCoreCalls(
 ): CoreCallSegmentRanksUpdate[] {
 	const playlistMovedSegments: PlaylistChangeSegmentMoved[] = changes.filter(
 		(playlistChange) => playlistChange.type === PlaylistChangeType.PlaylistChangeSegmentMoved
-	) as PlaylistChangeSegmentMoved[]
+	)
 
 	const updatedRanks: Map<RundownId, { [segmentId: string]: number }> = new Map()
 
-	for (let movedSegment of playlistMovedSegments) {
+	for (const movedSegment of playlistMovedSegments) {
 		const segmentId = movedSegment.segmentExternalId
 		const rundownId = movedSegment.rundownExternalId
 		let rank = assignedRanks.get(segmentId)
@@ -170,13 +170,13 @@ function createSegmentMovedCoreCalls(
 			rank = cachedData?.rank ?? 0
 		}
 
-		let rundownRanks = updatedRanks.get(rundownId) ?? {}
+		const rundownRanks = updatedRanks.get(rundownId) ?? {}
 		rundownRanks[segmentId] = rank
 		updatedRanks.set(rundownId, rundownRanks)
 	}
 
 	const coreCalls: CoreCallSegmentRanksUpdate[] = []
-	for (let [rundownId, ranks] of updatedRanks) {
+	for (const [rundownId, ranks] of updatedRanks) {
 		logger.debug(`Adding core call: Segment ranks update (${rundownId})`)
 		coreCalls.push(
 			literal<CoreCallSegmentRanksUpdate>({
@@ -206,8 +206,7 @@ function createSegmentDeletedCoreCalls(changes: PlaylistChange[]): CoreCallSegme
 	return changes
 		.filter((playlistChange) => playlistChange.type === PlaylistChangeType.PlaylistChangeSegmentDeleted)
 		.map((playlistChange) => {
-			const playlistChangeSegmentDeleted: PlaylistChangeSegmentDeleted =
-				playlistChange as PlaylistChangeSegmentDeleted
+			const playlistChangeSegmentDeleted: PlaylistChangeSegmentDeleted = playlistChange
 			logger.debug(`Adding core call: Segment delete (${playlistChangeSegmentDeleted.segmentExternalId})`)
 			return literal<CoreCallSegmentDelete>({
 				type: CoreCallType.dataSegmentDelete,
@@ -355,7 +354,7 @@ function createSegmentCreatedCoreCalls(
 	return changes
 		.filter((playlistChange) => playlistChange.type === PlaylistChangeType.PlaylistChangeSegmentCreated)
 		.map((playlistChange) => {
-			const change: PlaylistChangeSegmentCreated = playlistChange as PlaylistChangeSegmentCreated
+			const change: PlaylistChangeSegmentCreated = playlistChange
 			const segmentId = change.segmentExternalId
 			const rundownId = change.rundownExternalId
 			const inews = iNewsDataCache.get(change.segmentExternalId)
@@ -435,9 +434,9 @@ function playlistRundownToIngestRundown(
 	ranks: Map<SegmentId, number>,
 	untimedSegments: Set<SegmentId>
 ): IngestRundown {
-	let ingestSegments: IngestSegment[] = []
+	const ingestSegments: IngestSegment[] = []
 
-	for (let segmentId of segments) {
+	for (const segmentId of segments) {
 		const inews = inewsCache.get(segmentId)
 		const rank = ranks.get(segmentId)
 		const untimed = untimedSegments.has(segmentId)

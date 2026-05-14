@@ -9,11 +9,11 @@ import {
 import { StatusCode } from '@sofie-automation/shared-lib/dist/lib/status'
 import { PeripheralDeviceAPIMethods } from '@sofie-automation/shared-lib/dist/peripheralDevice/methodsAPI'
 
-import { RundownSegment } from './classes/datastructures/Segment'
-import { ReducedRundown, ReducedSegment, RundownMap, RundownWatcher } from './classes/RundownWatcher'
-import { CoreHandler } from './coreHandler'
-import { literal } from './helpers'
-import { VERSION } from './version'
+import { RundownSegment } from './classes/datastructures/Segment.js'
+import { ReducedRundown, ReducedSegment, RundownMap, RundownWatcher } from './classes/RundownWatcher.js'
+import { CoreHandler } from './coreHandler.js'
+import { literal } from './helpers.js'
+import { VERSION } from './version.js'
 
 export interface INewsDeviceSettings {
 	hosts?: Array<string>
@@ -48,7 +48,7 @@ export class InewsFTPHandler {
 	}
 
 	async init(coreHandler: CoreHandler): Promise<void> {
-		let peripheralDevice = await coreHandler.core.getPeripheralDevice()
+		const peripheralDevice = await coreHandler.core.getPeripheralDevice()
 		this._settings = (peripheralDevice.deviceSettings || {}) as INewsDeviceSettings
 
 		try {
@@ -70,7 +70,7 @@ export class InewsFTPHandler {
 	 * Find this peripheral device in peripheralDevices collection.
 	 */
 	private getThisPeripheralDevice(): PeripheralDeviceForDevice | undefined {
-		let peripheralDevices = this._coreHandler.core.getCollection(
+		const peripheralDevices = this._coreHandler.core.getCollection(
 			PeripheralDevicePubSubCollectionsNames.peripheralDeviceForDevice
 		)
 		return peripheralDevices.findOne(this._coreHandler.core.deviceId)
@@ -119,7 +119,7 @@ export class InewsFTPHandler {
 		})
 
 		if (!this.iNewsWatcher) {
-			let peripheralDevice = this.getThisPeripheralDevice()
+			const peripheralDevice = this.getThisPeripheralDevice()
 			if (peripheralDevice) {
 				await this._coreHandler.setStatus(StatusCode.UNKNOWN, ['Initializing iNews connection..'])
 				const queues = (this._settings.queues ?? []).filter((q) => !!q)
@@ -145,16 +145,16 @@ export class InewsFTPHandler {
 	 *  Get the current rundown state from Core and convert it to rundowns.
 	 */
 	async ingestDataToRundowns(gatewayVersion: string, rundownExternalIds: string[]): Promise<RundownMap> {
-		let rundownsCache: RundownMap = new Map()
+		const rundownsCache: RundownMap = new Map()
 
 		if (!rundownExternalIds.length) {
 			return rundownsCache
 		}
 
-		let coreRundowns = await this._coreHandler.GetRundownCache(rundownExternalIds)
+		const coreRundowns = await this._coreHandler.GetRundownCache(rundownExternalIds)
 
 		coreRundowns.forEach((ingestRundown) => {
-			let rundown: ReducedRundown = {
+			const rundown: ReducedRundown = {
 				externalId: ingestRundown.externalId,
 				name: ingestRundown.name,
 				gatewayVersion: ingestRundown.payload.gatewayVersion || gatewayVersion,

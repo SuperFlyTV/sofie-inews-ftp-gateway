@@ -8,10 +8,10 @@ import {
 	PeripheralDevicePubSubCollectionsNames,
 } from '@sofie-automation/server-core-integration'
 
-import { CoreConfig, CoreHandler } from './coreHandler'
-import { INewsDeviceSettings, InewsFTPHandler } from './inewsHandler'
-import { ensureLogLevel, setLogLevel } from './logger'
-import { Process } from './process'
+import { CoreConfig, CoreHandler } from './coreHandler.js'
+import { INewsDeviceSettings, InewsFTPHandler } from './inewsHandler.js'
+import { ensureLogLevel, setLogLevel } from './logger.js'
+import { Process } from './process.js'
 
 export interface Config {
 	process: ProcessConfig
@@ -94,26 +94,26 @@ export class Connector {
 
 	setupObserver() {
 		// Setup observer.
-		let observer = this.coreHandler.core.observe(PeripheralDevicePubSubCollectionsNames.peripheralDeviceForDevice)
+		const observer = this.coreHandler.core.observe(PeripheralDevicePubSubCollectionsNames.peripheralDeviceForDevice)
 		this._observers.push(observer)
 
-		let addedChanged = (id: PeripheralDeviceId) => {
+		const addedChanged = (id: PeripheralDeviceId) => {
 			// Check that collection exists.
-			let devices = this.coreHandler.core.getCollection(
+			const devices = this.coreHandler.core.getCollection(
 				PeripheralDevicePubSubCollectionsNames.peripheralDeviceForDevice
 			)
 			if (!devices) throw Error('"peripheralDeviceForDevice" collection not found!')
 
 			// Find studio ID.
-			let dev = devices.findOne(id)
+			const dev = devices.findOne(id)
 
 			if (dev) {
-				let settings = (dev.deviceSettings || {}) as INewsDeviceSettings
+				const settings = (dev.deviceSettings || {}) as INewsDeviceSettings
 				settings.queues = settings.queues?.filter((q) => q !== '')
 				if (!this._settings || !_.isEqual(_.omit(settings, 'debug'), _.omit(this._settings, 'debug'))) {
 					this.iNewsFTPHandler
 						.dispose()
-						.then(() => {
+						.then(async () => {
 							this.iNewsFTPHandler = new InewsFTPHandler(this._logger, this.coreHandler)
 							return this.initInewsFTPHandler()
 						})

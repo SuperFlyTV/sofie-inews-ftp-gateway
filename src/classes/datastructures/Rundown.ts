@@ -1,4 +1,4 @@
-import { RundownSegment } from './Segment'
+import { RundownSegment } from './Segment.js'
 
 export interface IRundown {
 	externalId: string

@@ -1,7 +1,7 @@
 import { UnparsedCue } from '@tv2media/inews'
 
-import { UnrankedSegment } from '../classes/RundownWatcher'
-import { SegmentId } from './id'
+import { UnrankedSegment } from '../classes/RundownWatcher.js'
+import { SegmentId } from './id.js'
 
 export type ResolvedPlaylist = Array<ResolvedPlaylistRundown>
 export type ResolvedPlaylistRundown = {
@@ -141,7 +141,7 @@ function getOrderedShowstyleVariants(segment: UnrankedSegment): string[] {
 }
 
 function parseShowstyleVariant(cue: UnparsedCue | undefined): string | null {
-	const numberOfCueLines = !!cue ? cue.length : -1
+	const numberOfCueLines = cue ? cue.length : -1
 
 	// Kommando cue (ignoring timing)
 	const showstyleVariantPattern = /^\s*SOFIE\s*=\s*SHOWSTYLEVARIANT/i
@@ -162,7 +162,7 @@ function getCueOrder(segment: UnrankedSegment): number[] {
 	const order: number[] = []
 	let match: RegExpExecArray | null
 	while ((match = refPattern.exec(body))) {
-		let id = parseInt(match.groups!.id, 10)
+		const id = parseInt(match.groups!.id, 10)
 		order.push(id)
 	}
 	return order
