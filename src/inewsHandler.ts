@@ -1,14 +1,19 @@
-import * as _ from 'underscore'
-import { CoreHandler } from './coreHandler'
-import { RundownWatcher, RundownMap, ReducedRundown, ReducedSegment } from './classes/RundownWatcher'
 import * as inews from '@tv2media/inews'
-import { literal } from './helpers'
-import { RundownSegment } from './classes/datastructures/Segment'
-import { VERSION } from './version'
 import { ILogger as Logger } from '@tv2media/logger'
+import * as _ from 'underscore'
+
+import {
+	PeripheralDeviceForDevice,
+	PeripheralDevicePubSubCollectionsNames,
+} from '@sofie-automation/server-core-integration'
 import { StatusCode } from '@sofie-automation/shared-lib/dist/lib/status'
 import { PeripheralDeviceAPIMethods } from '@sofie-automation/shared-lib/dist/peripheralDevice/methodsAPI'
-import { PeripheralDeviceForDevice, PeripheralDevicePubSubCollectionsNames } from '@sofie-automation/server-core-integration'
+
+import { RundownSegment } from './classes/datastructures/Segment'
+import { ReducedRundown, ReducedSegment, RundownMap, RundownWatcher } from './classes/RundownWatcher'
+import { CoreHandler } from './coreHandler'
+import { literal } from './helpers'
+import { VERSION } from './version'
 
 export interface INewsDeviceSettings {
 	hosts?: Array<string>
@@ -65,7 +70,9 @@ export class InewsFTPHandler {
 	 * Find this peripheral device in peripheralDevices collection.
 	 */
 	private getThisPeripheralDevice(): PeripheralDeviceForDevice | undefined {
-		let peripheralDevices = this._coreHandler.core.getCollection(PeripheralDevicePubSubCollectionsNames.peripheralDeviceForDevice)
+		let peripheralDevices = this._coreHandler.core.getCollection(
+			PeripheralDevicePubSubCollectionsNames.peripheralDeviceForDevice
+		)
 		return peripheralDevices.findOne(this._coreHandler.core.deviceId)
 	}
 

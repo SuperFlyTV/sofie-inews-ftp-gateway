@@ -1,6 +1,8 @@
 import * as _ from 'underscore'
+
 import { IngestPlaylist, IngestRundown, IngestSegment } from '@sofie-automation/blueprints-integration'
-import { RundownSegment, ISegment } from './classes/datastructures/Segment'
+
+import { ISegment, RundownSegment } from './classes/datastructures/Segment'
 import { ReducedPlaylist, ReducedRundown } from './classes/RundownWatcher'
 import { parseModifiedDateFromIngestSegmentWithFallbackToNow } from './helpers'
 
@@ -57,14 +59,17 @@ export function IngestSegmentToRundownSegment(ingestSegment: IngestSegment<ISegm
 export type MutatedSegment = Omit<ISegment, 'parts' | 'externalId' | 'rank' | 'name'>
 
 interface IOmit {
-	<T extends object, K extends [...(keyof T)[]]>(obj: T, ...keys: K): {
+	<T extends object, K extends [...(keyof T)[]]>(
+		obj: T,
+		...keys: K
+	): {
 		[K2 in Exclude<keyof T, K[number]>]: T[K2]
 	}
 }
 
 const omit: IOmit = (obj, ...keys) => {
 	let ret = {} as {
-		[K in keyof typeof obj]: typeof obj[K]
+		[K in keyof typeof obj]: (typeof obj)[K]
 	}
 	let key: keyof typeof obj
 	for (key in obj) {

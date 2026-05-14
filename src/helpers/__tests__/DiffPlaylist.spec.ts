@@ -1,3 +1,8 @@
+import { INewsFields, INewsStory } from '@tv2media/inews'
+
+import { INewsRundown } from '../../classes/datastructures/Rundown'
+import { RundownSegment } from '../../classes/datastructures/Segment'
+import { literal } from '../../helpers'
 import {
 	DiffPlaylist,
 	PlaylistChangeRundownCreated,
@@ -9,11 +14,7 @@ import {
 	PlaylistChangeSegmentMoved,
 	PlaylistChangeType,
 } from '../DiffPlaylist'
-import { INewsRundown } from '../../classes/datastructures/Rundown'
 import { SegmentId } from '../id'
-import { RundownSegment } from '../../classes/datastructures/Segment'
-import { literal } from '../../helpers'
-import { INewsStory, INewsFields } from '@tv2media/inews'
 
 function makeINewsRundown(
 	rundownId: string,

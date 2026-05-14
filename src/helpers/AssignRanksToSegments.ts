@@ -1,5 +1,5 @@
-import { literal } from '../helpers'
 import { ParsedINewsIntoSegments, SegmentRankings, SegmentRankingsInner } from '../classes/ParsedINewsToSegments'
+import { literal } from '../helpers'
 import { logger } from '../logger'
 import { PlaylistChange, PlaylistChangeSegmentMoved, PlaylistChangeType, SegmentChangesMap } from './DiffPlaylist'
 import { RundownId, SegmentId } from './id'
@@ -115,8 +115,8 @@ function generateMoveChanges(
 		const alreadyUpdating = changes.some(
 			(change) =>
 				change.type ===
-					(PlaylistChangeType.PlaylistChangeSegmentCreated || PlaylistChangeType.PlaylistChangeSegmentMoved) &&
-				change.segmentExternalId === segmentId
+					(PlaylistChangeType.PlaylistChangeSegmentCreated ||
+						PlaylistChangeType.PlaylistChangeSegmentMoved) && change.segmentExternalId === segmentId
 		)
 
 		if (!alreadyUpdating && previousRank.rank !== rank) {

@@ -1,6 +1,6 @@
-import { logger } from '../logger'
 import { INewsRundown } from '../classes/datastructures/Rundown'
 import { literal } from '../helpers'
+import { logger } from '../logger'
 import { GetMovedSegments } from './GetMovedSegments'
 import { RundownId, SegmentId } from './id'
 

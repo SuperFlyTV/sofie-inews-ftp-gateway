@@ -1,8 +1,10 @@
 import { IngestRundown, IngestSegment } from '@sofie-automation/blueprints-integration'
-import { INGEST_RUNDOWN_TYPE, MutatedSegment } from '../mutate'
+
+import { RundownSegment } from '../classes/datastructures/Segment'
 import { UnrankedSegment } from '../classes/RundownWatcher'
 import { literal } from '../helpers'
 import { logger } from '../logger'
+import { INGEST_RUNDOWN_TYPE, MutatedSegment } from '../mutate'
 import {
 	PlaylistChange,
 	PlaylistChangeSegmentChanged,
@@ -13,7 +15,6 @@ import {
 } from './DiffPlaylist'
 import { PlaylistId, RundownId, SegmentId } from './id'
 import { ResolvedPlaylist, ResolvedPlaylistRundown } from './ResolveRundownIntoPlaylist'
-import { RundownSegment } from '../classes/datastructures/Segment'
 
 export enum CoreCallType {
 	dataSegmentCreate = 'dataSegmentCreate',
@@ -205,7 +206,8 @@ function createSegmentDeletedCoreCalls(changes: PlaylistChange[]): CoreCallSegme
 	return changes
 		.filter((playlistChange) => playlistChange.type === PlaylistChangeType.PlaylistChangeSegmentDeleted)
 		.map((playlistChange) => {
-			const playlistChangeSegmentDeleted: PlaylistChangeSegmentDeleted = playlistChange as PlaylistChangeSegmentDeleted
+			const playlistChangeSegmentDeleted: PlaylistChangeSegmentDeleted =
+				playlistChange as PlaylistChangeSegmentDeleted
 			logger.debug(`Adding core call: Segment delete (${playlistChangeSegmentDeleted.segmentExternalId})`)
 			return literal<CoreCallSegmentDelete>({
 				type: CoreCallType.dataSegmentDelete,
@@ -308,13 +310,11 @@ function createSegmentChangedCoreCalls(
 	return changes
 		.filter((playlistChange) => playlistChange.type === PlaylistChangeType.PlaylistChangeSegmentChanged)
 		.map((playlistChange) => {
-			const change:
-				| PlaylistChangeSegmentMoved
-				| PlaylistChangeSegmentCreated
-				| PlaylistChangeSegmentChanged = playlistChange as
-				| PlaylistChangeSegmentMoved
-				| PlaylistChangeSegmentCreated
-				| PlaylistChangeSegmentChanged
+			const change: PlaylistChangeSegmentMoved | PlaylistChangeSegmentCreated | PlaylistChangeSegmentChanged =
+				playlistChange as
+					| PlaylistChangeSegmentMoved
+					| PlaylistChangeSegmentCreated
+					| PlaylistChangeSegmentChanged
 			const segmentId = change.segmentExternalId
 			const rundownId = change.rundownExternalId
 			const inews = iNewsDataCache.get(change.segmentExternalId)

@@ -1,3 +1,9 @@
+import * as fs from 'fs'
+
+import { ILogger as Logger } from '@tv2media/logger'
+import * as _ from 'underscore'
+
+import { IngestPlaylist, IngestRundown, IngestSegment } from '@sofie-automation/blueprints-integration'
 import {
 	CoreConnection,
 	CoreOptions,
@@ -8,30 +14,27 @@ import {
 	PeripheralDevicePubSubCollectionsNames,
 	StudioId,
 } from '@sofie-automation/server-core-integration'
-import { ILogger as Logger } from '@tv2media/logger'
-import * as fs from 'fs'
-import { Process } from './process'
+import { PeripheralDeviceCommandId, PeripheralDeviceId } from '@sofie-automation/shared-lib/dist/core/model/Ids'
+import { protectString, unprotectString } from '@sofie-automation/shared-lib/dist/lib/protectedString'
+import { StatusCode } from '@sofie-automation/shared-lib/dist/lib/status'
+import { PeripheralDeviceAPIMethods } from '@sofie-automation/shared-lib/dist/peripheralDevice/methodsAPI'
 import {
 	PeripheralDeviceCategory,
 	PeripheralDeviceStatusObject,
 	PeripheralDeviceType,
 } from '@sofie-automation/shared-lib/dist/peripheralDevice/peripheralDeviceAPI'
-import { PeripheralDeviceCommandId, PeripheralDeviceId } from '@sofie-automation/shared-lib/dist/core/model/Ids'
-import { StatusCode } from '@sofie-automation/shared-lib/dist/lib/status'
-import * as _ from 'underscore'
-import { PeripheralDeviceAPIMethods } from '@sofie-automation/shared-lib/dist/peripheralDevice/methodsAPI'
+
+import { INewsRundown } from './classes/datastructures/Rundown'
+import { ISegment, RundownSegment } from './classes/datastructures/Segment'
+import { ReducedRundown } from './classes/RundownWatcher'
+import { INEWS_DEVICE_CONFIG_MANIFEST } from './configManifest'
 import { DeviceConfig } from './connector'
+import { ReflectPromise } from './helpers'
+import { RundownId, SegmentId } from './helpers/id'
 import { InewsFTPHandler } from './inewsHandler'
 import { IngestSegmentToRundownSegment } from './mutate'
-import { ISegment, RundownSegment } from './classes/datastructures/Segment'
-import { IngestSegment, IngestRundown, IngestPlaylist } from '@sofie-automation/blueprints-integration'
-import { INEWS_DEVICE_CONFIG_MANIFEST } from './configManifest'
-import { ReflectPromise } from './helpers'
-import { ReducedRundown } from './classes/RundownWatcher'
+import { Process } from './process'
 import { VersionIsCompatible } from './version'
-import { RundownId, SegmentId } from './helpers/id'
-import { protectString, unprotectString } from '@sofie-automation/shared-lib/dist/lib/protectedString'
-import { INewsRundown } from './classes/datastructures/Rundown'
 
 export interface CoreConfig {
 	host: string
@@ -220,7 +223,11 @@ export class CoreHandler {
 					case 'pingResponse':
 						let pingResponseResult = await Promise.resolve(this.pingResponse(commandArg))
 						success = true
-						await this.core.callMethodRaw(PeripheralDeviceAPIMethods.functionReply, [cmd._id, null, pingResponseResult])
+						await this.core.callMethodRaw(PeripheralDeviceAPIMethods.functionReply, [
+							cmd._id,
+							null,
+							pingResponseResult,
+						])
 						break
 					case 'retireExecuteFunction':
 						let retireExecuteFunctionResult = await Promise.resolve(this.retireExecuteFunction(commandArg))
@@ -243,7 +250,11 @@ export class CoreHandler {
 					case 'getSnapshot':
 						let getSnapshotResult = await Promise.resolve(this.getSnapshot())
 						success = true
-						await this.core.callMethodRaw(PeripheralDeviceAPIMethods.functionReply, [cmd._id, null, getSnapshotResult])
+						await this.core.callMethodRaw(PeripheralDeviceAPIMethods.functionReply, [
+							cmd._id,
+							null,
+							getSnapshotResult,
+						])
 						break
 					default:
 						throw Error('Function "' + cmd.functionName + '" not found!')
@@ -252,7 +263,11 @@ export class CoreHandler {
 				this.logger.data(error).error(`executeFunction error ${success ? 'during execution' : 'on reply'}:`)
 				if (!success) {
 					await this.core
-						.callMethodRaw(PeripheralDeviceAPIMethods.functionReply, [cmd._id, (error as any).toString(), null])
+						.callMethodRaw(PeripheralDeviceAPIMethods.functionReply, [
+							cmd._id,
+							(error as any).toString(),
+							null,
+						])
 						.catch((e) => this.logger.data(e).error('executeFunction reply error after execution failure:'))
 				}
 			}
@@ -284,7 +299,9 @@ export class CoreHandler {
 			let cmd = cmds.findOne(id)
 			if (!cmd) throw Error('PeripheralCommand "' + id + '" not found!')
 			if (cmd.deviceId === this.core.deviceId) {
-				this.executeFunction(cmd).catch((e) => this.logger.data(e).error(`Error executing command received from core:`))
+				this.executeFunction(cmd).catch((e) =>
+					this.logger.data(e).error(`Error executing command received from core:`)
+				)
 			}
 		}
 		observer.added = (id: PeripheralDeviceCommandId) => {

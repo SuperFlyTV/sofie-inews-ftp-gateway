@@ -1,5 +1,7 @@
 import { INewsStory } from '@tv2media/inews'
+
 import { IngestSegment } from '@sofie-automation/blueprints-integration'
+
 import { ISegment } from './classes/datastructures/Segment'
 
 export function literal<T>(o: T) {

@@ -1,4 +1,5 @@
 import { UnparsedCue } from '@tv2media/inews'
+
 import { UnrankedSegment } from '../classes/RundownWatcher'
 import { SegmentId } from './id'
 

@@ -1,7 +1,8 @@
+import { INewsFields, INewsStory } from '@tv2media/inews'
+
+import { UnrankedSegment } from '../../classes/RundownWatcher'
 import { literal } from '../../helpers'
 import { ResolvedPlaylist, ResolveRundownIntoPlaylist } from '../ResolveRundownIntoPlaylist'
-import { UnrankedSegment } from '../../classes/RundownWatcher'
-import { INewsStory, INewsFields } from '@tv2media/inews'
 
 type SegmentOptions = {
 	backTime?: string

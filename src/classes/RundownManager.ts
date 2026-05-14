@@ -1,10 +1,11 @@
-import { INewsClient, INewsFTPStoryOrQueue, INewsStory, INewsFTPStory } from '@tv2media/inews'
+import { INewsClient, INewsFTPStory, INewsFTPStoryOrQueue, INewsStory } from '@tv2media/inews'
+import { ILogger as Logger } from '@tv2media/logger'
+
+import { literal, parseModifiedDateFromInewsStoryWithFallbackToNow, ReflectPromise } from '../helpers'
+import { SegmentId } from '../helpers/id'
+import { VERSION } from '../version'
 import { INewsStoryGW } from './datastructures/Segment'
 import { ReducedRundown, ReducedSegment, UnrankedSegment } from './RundownWatcher'
-import { literal, parseModifiedDateFromInewsStoryWithFallbackToNow, ReflectPromise } from '../helpers'
-import { VERSION } from '../version'
-import { SegmentId } from '../helpers/id'
-import { ILogger as Logger } from '@tv2media/logger'
 
 function isStory(f: INewsFTPStoryOrQueue): f is INewsFTPStory {
 	return f.filetype === 'story'
@@ -14,7 +15,10 @@ export class RundownManager {
 	private _listStories!: (queueName: string) => Promise<Array<INewsFTPStoryOrQueue>>
 	private _getStory!: (queueName: string, story: string) => Promise<INewsStory>
 
-	constructor(private _logger?: Logger, private inewsConnection?: INewsClient) {
+	constructor(
+		private _logger?: Logger,
+		private inewsConnection?: INewsClient
+	) {
 		if (this.inewsConnection) {
 			this._listStories = this.inewsConnection.list.bind(this.inewsConnection)
 			this._getStory = this.inewsConnection.story.bind(this.inewsConnection)

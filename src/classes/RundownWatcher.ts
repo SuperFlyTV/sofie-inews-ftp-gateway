@@ -1,22 +1,25 @@
 import { EventEmitter } from 'events'
-import * as dotenv from 'dotenv'
-import { INewsRundown } from './datastructures/Rundown'
-import { RundownManager } from './RundownManager'
-import { RundownSegment, ISegment } from './datastructures/Segment'
-import { InewsFTPHandler } from '../inewsHandler'
+
 import { INewsClient } from '@tv2media/inews'
-import { StatusCode } from '@sofie-automation/shared-lib/dist/lib/status'
-import { CoreHandler } from '../coreHandler'
-import { SegmentRankings, SegmentRankingsInner } from './ParsedINewsToSegments'
-import { IngestPlaylist, IngestRundown, IngestSegment } from '@sofie-automation/blueprints-integration'
-import { ResolvedPlaylist, ResolveRundownIntoPlaylist } from '../helpers/ResolveRundownIntoPlaylist'
-import { DiffPlaylist } from '../helpers/DiffPlaylist'
-import { PlaylistId, RundownId, SegmentId } from '../helpers/id'
-import { Mutex } from 'async-mutex'
-import { AssignRanksToSegments } from '../helpers/AssignRanksToSegments'
-import { CoreCallType, GenerateCoreCalls } from '../helpers/GenerateCoreCalls'
-import { assertUnreachable } from '../helpers'
 import { ILogger as Logger } from '@tv2media/logger'
+import { Mutex } from 'async-mutex'
+import * as dotenv from 'dotenv'
+
+import { IngestPlaylist, IngestRundown, IngestSegment } from '@sofie-automation/blueprints-integration'
+import { StatusCode } from '@sofie-automation/shared-lib/dist/lib/status'
+
+import { CoreHandler } from '../coreHandler'
+import { assertUnreachable } from '../helpers'
+import { AssignRanksToSegments } from '../helpers/AssignRanksToSegments'
+import { DiffPlaylist } from '../helpers/DiffPlaylist'
+import { CoreCallType, GenerateCoreCalls } from '../helpers/GenerateCoreCalls'
+import { PlaylistId, RundownId, SegmentId } from '../helpers/id'
+import { ResolvedPlaylist, ResolveRundownIntoPlaylist } from '../helpers/ResolveRundownIntoPlaylist'
+import { InewsFTPHandler } from '../inewsHandler'
+import { INewsRundown } from './datastructures/Rundown'
+import { ISegment, RundownSegment } from './datastructures/Segment'
+import { SegmentRankings, SegmentRankingsInner } from './ParsedINewsToSegments'
+import { RundownManager } from './RundownManager'
 
 dotenv.config()
 
@@ -165,7 +168,11 @@ export class RundownWatcher extends EventEmitter {
 		((event: 'segment_delete', rundownId: string, segmentId: string) => boolean) &
 		((event: 'segment_create', rundownId: string, segmentId: string, newSegment: IngestSegment) => boolean) &
 		((event: 'segment_update', rundownId: string, segmentId: string, newSegment: IngestSegment) => boolean) &
-		((event: 'segment_ranks_update', rundownId: string, newRanks: { [segmentExternalId: string]: number }) => boolean)
+		((
+			event: 'segment_ranks_update',
+			rundownId: string,
+			newRanks: { [segmentExternalId: string]: number }
+		) => boolean)
 
 	public pollInterval: number = 2000
 	private pollTimer: NodeJS.Timeout | undefined

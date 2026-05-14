@@ -1,7 +1,9 @@
-import { RundownId, SegmentId } from '../helpers/id'
-import _ = require('underscore')
 import { ILogger as Logger } from '@tv2media/logger'
+
 import { SegmentChanges } from '../helpers/DiffPlaylist'
+import { RundownId, SegmentId } from '../helpers/id'
+
+import _ = require('underscore')
 
 export interface IParsedElement {
 	data: {
