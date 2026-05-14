@@ -61,6 +61,8 @@ describe('RundownManager', () => {
 			testee.generateCuesFromLayoutField(story)
 
 			const lines = story.body?.split('\r\n')
+			expect(lines).toBeDefined()
+			if (!lines) return
 			const index = lines.findIndex((line) => line.match('<pi>'))
 			expect(lines[index + 1]).toMatch(/<a(.*?)<\/a>/i)
 		})
