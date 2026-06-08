@@ -71,7 +71,7 @@
     "@sofie-automation/blueprints-integration": "1.52.0-in-testing.0",
     "@sofie-automation/server-core-integration": "1.52.0-in-testing.0",
     "@sofie-automation/shared-lib": "1.52.0-in-testing.0",
-    "@tv2media/inews": "git+https://github.com/tv2norge/node-inews.git#785bca48bdc30747805408522e553dc5e4d50a7f",
+    "@tv2media/inews": "git+https://github.com/superflytv/node-inews.git#2712651ec37bf0dad414988eea9f6322b0c04f52",
     "@tv2media/logger": "^1.2.4",
     "async-mutex": "^0.3.1",
     "cross-env": "^7.0.3",
