@@ -114,7 +114,7 @@ export class InewsFTPHandler {
 		if (!this.iNewsWatcher) {
 			let peripheralDevice = this.getThisPeripheralDevice()
 			if (peripheralDevice) {
-				await this._coreHandler.setStatus(StatusCode.UNKNOWN, ['Initializing..'])
+				await this._coreHandler.setStatus(StatusCode.UNKNOWN, ['Initializing iNews connection..'])
 				const queues = (this._settings.queues ?? []).filter((q) => !!q)
 				this.iNewsWatcher = new RundownWatcher(
 					this._logger,

@@ -13,7 +13,6 @@ import * as fs from 'fs'
 import { Process } from './process'
 import {
 	PeripheralDeviceCategory,
-	PeripheralDeviceStatusObject,
 	PeripheralDeviceType,
 } from '@sofie-automation/shared-lib/dist/peripheralDevice/peripheralDeviceAPI'
 import { PeripheralDeviceCommandId, PeripheralDeviceId } from '@sofie-automation/shared-lib/dist/core/model/Ids'
@@ -110,21 +109,33 @@ export class CoreHandler {
 		})
 		await this.core.destroy()
 	}
+
+	private lastSentStatus: {
+		statusCode: StatusCode,
+		messages: string[]
+	} = {
+		statusCode: StatusCode.UNKNOWN,
+		messages: []
+	}
 	/**
 	 * Report gateway status to core
 	 */
-	async setStatus(statusCode: StatusCode, messages: string[]): Promise<PeripheralDeviceStatusObject> {
+	async setStatus(statusCode: StatusCode, messages: string[]): Promise<void> {
+
+		const newStatus = {
+			statusCode: statusCode,
+			messages: messages,
+		}
+		if (_.isEqual(newStatus, this.lastSentStatus)) return // No need to update
+
+		this.lastSentStatus = newStatus
 		try {
-			return this.core.setStatus({
+			await this.core.setStatus({
 				statusCode: statusCode,
 				messages: messages,
 			})
 		} catch (error) {
 			this.logger.data(error).warn('Error when setting status:')
-			return {
-				statusCode: StatusCode.WARNING_MAJOR,
-				messages: ['Error when setting status', error as string],
-			}
 		}
 	}
 	/**
