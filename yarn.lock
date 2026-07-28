@@ -639,7 +639,7 @@ __metadata:
     "@sofie-automation/blueprints-integration": 1.52.0-in-testing.0
     "@sofie-automation/server-core-integration": 1.52.0-in-testing.0
     "@sofie-automation/shared-lib": 1.52.0-in-testing.0
-    "@tv2media/inews": "git+https://github.com/superflytv/node-inews.git#2712651ec37bf0dad414988eea9f6322b0c04f52"
+    "@tv2media/inews": "git+https://github.com/superflytv/node-inews.git#6f0fb0d28c952de064c25231c906de69111893fe"
     "@tv2media/logger": ^1.2.4
     "@types/dotenv": ^6.1.1
     "@types/jest": ^24.0.11
@@ -671,16 +671,16 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@tv2media/inews@git+https://github.com/superflytv/node-inews.git#2712651ec37bf0dad414988eea9f6322b0c04f52":
+"@tv2media/inews@git+https://github.com/superflytv/node-inews.git#6f0fb0d28c952de064c25231c906de69111893fe":
   version: 1.3.4
-  resolution: "@tv2media/inews@https://github.com/superflytv/node-inews.git#commit=2712651ec37bf0dad414988eea9f6322b0c04f52"
+  resolution: "@tv2media/inews@https://github.com/superflytv/node-inews.git#commit=6f0fb0d28c952de064c25231c906de69111893fe"
   dependencies:
     "@types/ftp": ^0.3.33
     camelcase: ^6.0.0
     ftp: 0.3.x
     htmlparser: ^1.7.7
     unescape: ^1.0.1
-  checksum: 4c63a49bf57365a9134eeff2519a80f89257b25e4d0dcc65a1945e9e3204be02f9bb5a5e2366e819920d77c4700f48fbad634a401f4eaa0a3f04e8b983f6e865
+  checksum: ad77604268c5e573100b39128fd513759f7d2dc4855fc95254ce413a3902bcb616f9d4d320fdb6a323bda4bcec07b66edd4cd8b2d0f287ab235420aa798b9c55
   languageName: node
   linkType: hard
 
