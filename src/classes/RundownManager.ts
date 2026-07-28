@@ -150,7 +150,7 @@ export class RundownManager {
 		story.body =
 			primaryCueIndex > 0
 				? this.insertLinkAfterFirstPrimaryCue(lines, primaryCueIndex, cueIndex)
-				: story.body!.concat(`<p><\a idref="${cueIndex}"></a></p>`)
+				: story.body!.concat(`<p><a idref="${cueIndex}"></a></p>`)
 	}
 
 	private insertLinkAfterFirstPrimaryCue(lines: string[], typeIndex: number, layoutCueIndex: number): string {
@@ -158,7 +158,7 @@ export class RundownManager {
 		const afterPrimaryCueHalf = lines.slice(typeIndex + 1, lines.length)
 		return this.reassembleBody([
 			...throughPrimaryCueHalf,
-			`<\a idref="${layoutCueIndex}"></a></p>\r\n`,
+			`<a idref="${layoutCueIndex}"></a></p>\r\n`,
 			...afterPrimaryCueHalf,
 		])
 	}
