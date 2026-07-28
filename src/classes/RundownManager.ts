@@ -1,4 +1,4 @@
-import { INewsClient, INewsFTPStoryOrQueue, INewsStory, INewsFTPStory } from '@tv2media/inews'
+import { INewsClient, INewsFTPStoryOrQueue, INewsStory, INewsFTPStory, NsmlElement } from '@tv2media/inews'
 import { INewsStoryGW } from './datastructures/Segment'
 import { ReducedRundown, ReducedSegment, UnrankedSegment } from './RundownWatcher'
 import { literal, parseModifiedDateFromInewsStoryWithFallbackToNow, ReflectPromise } from '../helpers'
@@ -139,6 +139,7 @@ export class RundownManager {
 	private addDesignLayoutCueToStory(story: INewsStory): void {
 		const cueIndex = this.addCueToStory(story, 'DESIGN_LAYOUT')
 		this.addLinkToStory(story, cueIndex)
+		this.insertLinkInBodyNodes(story, cueIndex)
 	}
 
 	/**
@@ -150,7 +151,39 @@ export class RundownManager {
 		story.body =
 			primaryCueIndex > 0
 				? this.insertLinkAfterFirstPrimaryCue(lines, primaryCueIndex, cueIndex)
-				: story.body!.concat(`<p><\a idref="${cueIndex}"></a></p>`)
+				: story.body!.concat(`<p><a idref="${cueIndex}"></a></p>`)
+	}
+
+	/**
+	 * Creates a new paragraph element with a link to the cue at the 'cueIndex'
+	 */
+	private createCueLinkParagraph(cueIndex: number): NsmlElement {
+		return {
+			tag: 'p',
+			attrs: {},
+			children: [{ tag: 'a', attrs: { idref: String(cueIndex) }, children: [] }],
+		}
+	}
+
+	/**
+	 * Mirror layout-cue `<a idref>` injection into `bodyNodes`.
+	 * Finds the first `<p>` containing `<pi>` independently of the `body` string path.
+	 */
+	private insertLinkInBodyNodes(story: INewsStory, cueIndex: number): void {
+		const linkParagraph = this.createCueLinkParagraph(cueIndex)
+		const nodes = story.bodyNodes ? [...story.bodyNodes] : []
+		const piParagraphIndex = nodes.findIndex(
+			(node) =>
+				'tag' in node &&
+				node.tag === 'p' &&
+				node.children.some((child) => 'tag' in child && child.tag === 'pi')
+		)
+		if (piParagraphIndex >= 0) {
+			nodes.splice(piParagraphIndex + 1, 0, linkParagraph)
+		} else {
+			nodes.push(linkParagraph)
+		}
+		story.bodyNodes = nodes
 	}
 
 	private insertLinkAfterFirstPrimaryCue(lines: string[], typeIndex: number, layoutCueIndex: number): string {
@@ -158,7 +191,7 @@ export class RundownManager {
 		const afterPrimaryCueHalf = lines.slice(typeIndex + 1, lines.length)
 		return this.reassembleBody([
 			...throughPrimaryCueHalf,
-			`<\a idref="${layoutCueIndex}"></a></p>\r\n`,
+			`<a idref="${layoutCueIndex}"></a></p>\r\n`,
 			...afterPrimaryCueHalf,
 		])
 	}
@@ -180,6 +213,7 @@ export class RundownManager {
 	private addDesignBgCueToStory(story: INewsStory): void {
 		const cueIndex = this.addCueToStory(story, 'DESIGN_BG')
 		this.addLinkToStory(story, cueIndex)
+		this.insertLinkInBodyNodes(story, cueIndex)
 	}
 
 	/**

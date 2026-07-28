@@ -91,10 +91,67 @@ describe('RundownManager', () => {
 			const cueIndex = story.cues!.findIndex((cue) => cue!.some((line) => line.match(/DESIGN_BG=/i)))
 			expect(story.body!.match(`<a idref="${cueIndex}"><\\/a>`)).toBeTruthy()
 		})
+
+		it('mirrors cue links into bodyNodes when present', () => {
+			const story = createStory(LAYOUT, `<p><pi>START ITEM</pi></p>\r\n<p></p>\r\n`, [
+				{
+					tag: 'p',
+					attrs: {},
+					children: [{ tag: 'pi', attrs: {}, children: [{ text: 'START ITEM' }] }],
+				},
+				{ tag: 'p', attrs: {}, children: [] },
+			])
+
+			testee.generateCuesFromLayoutField(story)
+
+			expect(story.bodyNodes).toEqual([
+				{
+					tag: 'p',
+					attrs: {},
+					children: [{ tag: 'pi', attrs: {}, children: [{ text: 'START ITEM' }] }],
+				},
+				// DESIGN_BG is added second, so it lands closest to the <pi> (same as body string)
+				{
+					tag: 'p',
+					attrs: {},
+					children: [{ tag: 'a', attrs: { idref: '1' }, children: [] }],
+				},
+				{
+					tag: 'p',
+					attrs: {},
+					children: [{ tag: 'a', attrs: { idref: '0' }, children: [] }],
+				},
+				{ tag: 'p', attrs: {}, children: [] },
+			])
+		})
+
+		it('appends cue links to bodyNodes when there is no <pi>', () => {
+			const story = createStory(LAYOUT, '<p></p>', [{ tag: 'p', attrs: {}, children: [] }])
+
+			testee.generateCuesFromLayoutField(story)
+
+			expect(story.bodyNodes).toEqual([
+				{ tag: 'p', attrs: {}, children: [] },
+				{
+					tag: 'p',
+					attrs: {},
+					children: [{ tag: 'a', attrs: { idref: '0' }, children: [] }],
+				},
+				{
+					tag: 'p',
+					attrs: {},
+					children: [{ tag: 'a', attrs: { idref: '1' }, children: [] }],
+				},
+			])
+		})
 	})
 })
 
-function createStory(layout?: string, body?: string): INewsStoryGW {
+function createStory(
+	layout?: string,
+	body?: string,
+	bodyNodes?: INewsStoryGW['bodyNodes']
+): INewsStoryGW {
 	return {
 		id: '',
 		identifier: '',
@@ -112,6 +169,7 @@ function createStory(layout?: string, body?: string): INewsStoryGW {
 			videoId: { value: '', attributes: {} },
 		},
 		body: body ?? '<p></p>',
+		bodyNodes,
 		cues: [],
 		locator: '',
 		meta: {},
