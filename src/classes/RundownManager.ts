@@ -1,10 +1,11 @@
-import { INewsClient, INewsFTPStoryOrQueue, INewsStory, INewsFTPStory } from '@tv2media/inews'
-import { INewsStoryGW } from './datastructures/Segment'
-import { ReducedRundown, ReducedSegment, UnrankedSegment } from './RundownWatcher'
-import { literal, parseModifiedDateFromInewsStoryWithFallbackToNow, ReflectPromise } from '../helpers'
-import { VERSION } from '../version'
-import { SegmentId } from '../helpers/id'
+import { INewsClient, INewsFTPStory, INewsFTPStoryOrQueue, INewsStory } from '@tv2media/inews'
 import { ILogger as Logger } from '@tv2media/logger'
+
+import { literal, parseModifiedDateFromInewsStoryWithFallbackToNow, ReflectPromise } from '../helpers.js'
+import { SegmentId } from '../helpers/id.js'
+import { VERSION } from '../version.js'
+import { INewsStoryGW } from './datastructures/Segment.js'
+import { ReducedRundown, ReducedSegment, UnrankedSegment } from './RundownWatcher.js'
 
 function isStory(f: INewsFTPStoryOrQueue): f is INewsFTPStory {
 	return f.filetype === 'story'
@@ -14,7 +15,10 @@ export class RundownManager {
 	private _listStories!: (queueName: string) => Promise<Array<INewsFTPStoryOrQueue>>
 	private _getStory!: (queueName: string, story: string) => Promise<INewsStory>
 
-	constructor(private _logger?: Logger, private inewsConnection?: INewsClient) {
+	constructor(
+		private _logger?: Logger,
+		private inewsConnection?: INewsClient
+	) {
 		if (this.inewsConnection) {
 			this._listStories = this.inewsConnection.list.bind(this.inewsConnection)
 			this._getStory = this.inewsConnection.story.bind(this.inewsConnection)
@@ -41,7 +45,7 @@ export class RundownManager {
 			segments: [],
 		}
 		try {
-			let dirList = await this._listStories(queueName)
+			const dirList = await this._listStories(queueName)
 			dirList.forEach((ftpFileName: INewsFTPStoryOrQueue, index) => {
 				if (isStory(ftpFileName)) {
 					rundown.segments.push(
@@ -145,12 +149,13 @@ export class RundownManager {
 	 * Adds a new link to the story that references the cue at the 'cueIndex'
 	 */
 	private addLinkToStory(story: INewsStory, cueIndex: number): void {
-		const lines = story.body!.split('<p>')
+		const body = story.body ?? ''
+		const lines = body.split('<p>')
 		const primaryCueIndex = lines.findIndex((line) => !!line.match(/<pi>(.*?)<\/pi>/i))
 		story.body =
 			primaryCueIndex > 0
 				? this.insertLinkAfterFirstPrimaryCue(lines, primaryCueIndex, cueIndex)
-				: story.body!.concat(`<p><\a idref="${cueIndex}"></a></p>`)
+				: body.concat(`<p><a idref="${cueIndex}"></a></p>`)
 	}
 
 	private insertLinkAfterFirstPrimaryCue(lines: string[], typeIndex: number, layoutCueIndex: number): string {
@@ -158,7 +163,7 @@ export class RundownManager {
 		const afterPrimaryCueHalf = lines.slice(typeIndex + 1, lines.length)
 		return this.reassembleBody([
 			...throughPrimaryCueHalf,
-			`<\a idref="${layoutCueIndex}"></a></p>\r\n`,
+			`<a idref="${layoutCueIndex}"></a></p>\r\n`,
 			...afterPrimaryCueHalf,
 		])
 	}
@@ -173,7 +178,7 @@ export class RundownManager {
 	 * Adds a cue to the story. Returns the index of the newly added cue.
 	 */
 	private addCueToStory(story: INewsStory, cueKey: string): number {
-		story.cues.push([`${cueKey}=${story.fields.layout!.value!.toUpperCase()}`])
+		story.cues.push([`${cueKey}=${story.fields.layout?.value.toUpperCase() ?? ''}`])
 		return story.cues.length - 1
 	}
 
@@ -198,11 +203,11 @@ export class RundownManager {
 				(segment: INewsFTPStoryOrQueue) => (segment as INewsFTPStory).identifier === segmentId
 			)
 
-			if (!segment) return Promise.reject(`Cannot find segment with name ${segmentId}`)
+			if (!segment) return Promise.reject(new Error(`Cannot find segment with name ${segmentId}`))
 
 			return this.downloadINewsStory(queueName, segment)
 		} else {
-			return Promise.reject(`Cannot find rundown with Id ${queueName}`)
+			return Promise.reject(new Error(`Cannot find rundown with Id ${queueName}`))
 		}
 	}
 }

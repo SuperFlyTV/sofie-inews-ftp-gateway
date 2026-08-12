@@ -1,4 +1,4 @@
-import { RundownSegment } from './Segment'
+import { RundownSegment } from './Segment.js'
 
 export interface IRundown {
 	externalId: string
@@ -21,7 +21,7 @@ export class INewsRundown implements IRundown {
 		}
 	}
 
-	addSegments(segments: RundownSegment[]) {
+	addSegments(segments: RundownSegment[]): void {
 		segments.forEach((segment) => {
 			this.segments.push(segment)
 		})

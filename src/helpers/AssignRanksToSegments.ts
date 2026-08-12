@@ -1,9 +1,9 @@
-import { literal } from '../helpers'
-import { ParsedINewsIntoSegments, SegmentRankings, SegmentRankingsInner } from '../classes/ParsedINewsToSegments'
-import { logger } from '../logger'
-import { PlaylistChange, PlaylistChangeSegmentMoved, PlaylistChangeType, SegmentChangesMap } from './DiffPlaylist'
-import { RundownId, SegmentId } from './id'
-import { ResolvedPlaylist, ResolvedPlaylistRundown } from './ResolveRundownIntoPlaylist'
+import { ParsedINewsIntoSegments, SegmentRankings, SegmentRankingsInner } from '../classes/ParsedINewsToSegments.js'
+import { literal } from '../helpers.js'
+import { logger } from '../logger.js'
+import { PlaylistChange, PlaylistChangeSegmentMoved, PlaylistChangeType, SegmentChangesMap } from './DiffPlaylist.js'
+import { RundownId, SegmentId } from './id.js'
+import { ResolvedPlaylist, ResolvedPlaylistRundown } from './ResolveRundownIntoPlaylist.js'
 
 const RECALCULATE_RANKS_CHANGE_THRESHOLD = 50
 const MAX_TIME_BEFORE_RECALCULATE_RANKS = 60 * 60 * 1000 // One hour
@@ -22,8 +22,8 @@ export function AssignRanksToSegments(
 		recalculatedAsIntegers: boolean
 	}> = []
 
-	for (let rundown of playlistAssignments) {
-		let assignedRanks: Map<SegmentId, number> = new Map()
+	for (const rundown of playlistAssignments) {
+		const assignedRanks: Map<SegmentId, number> = new Map()
 		let recalculated: boolean = false
 
 		const changesToSegments = segmentChanges.get(rundown.rundownId)
@@ -39,13 +39,14 @@ export function AssignRanksToSegments(
 		}
 
 		logger.debug(`Getting ranks for ${rundown.rundownId}`)
-		let { segmentRanks, recalculatedAsIntegers } = ParsedINewsIntoSegments.GetRanks(
+		const { segmentRanks: initialSegmentRanks, recalculatedAsIntegers } = ParsedINewsIntoSegments.GetRanks(
 			rundown.rundownId,
 			rundown.segments,
 			previousRanks,
 			changesToSegments,
 			logger
 		)
+		let segmentRanks = initialSegmentRanks
 
 		// Check if we should recalculate ranks to integer values from scratch.
 		if (!recalculatedAsIntegers && shouldRecalculateRanks(changes, lastRankRecalculation, rundown, segmentRanks)) {
@@ -62,7 +63,7 @@ export function AssignRanksToSegments(
 		}
 
 		// Store ranks
-		for (let [segmentId, rank] of segmentRanks) {
+		for (const [segmentId, rank] of segmentRanks) {
 			assignedRanks.set(segmentId, rank)
 		}
 
@@ -84,7 +85,7 @@ function shouldRecalculateRanks(
 ) {
 	let prevRank: number | undefined = undefined
 	let minRank = Number.POSITIVE_INFINITY
-	for (const [_, rank] of segmentRanks) {
+	for (const [_key, rank] of segmentRanks) {
 		if (prevRank !== undefined) {
 			const diffRank = rank - prevRank
 			minRank = Math.min(minRank, diffRank)
@@ -105,7 +106,7 @@ function generateMoveChanges(
 	changes: PlaylistChange[],
 	rundown: ResolvedPlaylistRundown
 ) {
-	for (let [segmentId, rank] of segmentRanks) {
+	for (const [segmentId, rank] of segmentRanks) {
 		const previousRank = rundownPreviousRanks.get(segmentId)
 
 		if (!previousRank) {
@@ -115,8 +116,8 @@ function generateMoveChanges(
 		const alreadyUpdating = changes.some(
 			(change) =>
 				change.type ===
-					(PlaylistChangeType.PlaylistChangeSegmentCreated || PlaylistChangeType.PlaylistChangeSegmentMoved) &&
-				change.segmentExternalId === segmentId
+					(PlaylistChangeType.PlaylistChangeSegmentCreated ||
+						PlaylistChangeType.PlaylistChangeSegmentMoved) && change.segmentExternalId === segmentId
 		)
 
 		if (!alreadyUpdating && previousRank.rank !== rank) {

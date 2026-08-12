@@ -1,22 +1,25 @@
 import { EventEmitter } from 'events'
-import * as dotenv from 'dotenv'
-import { INewsRundown } from './datastructures/Rundown'
-import { RundownManager } from './RundownManager'
-import { RundownSegment, ISegment } from './datastructures/Segment'
-import { InewsFTPHandler } from '../inewsHandler'
+
 import { INewsClient } from '@tv2media/inews'
-import { StatusCode } from '@sofie-automation/shared-lib/dist/lib/status'
-import { CoreHandler } from '../coreHandler'
-import { SegmentRankings, SegmentRankingsInner } from './ParsedINewsToSegments'
-import { IngestPlaylist, IngestRundown, IngestSegment } from '@sofie-automation/blueprints-integration'
-import { ResolvedPlaylist, ResolveRundownIntoPlaylist } from '../helpers/ResolveRundownIntoPlaylist'
-import { DiffPlaylist } from '../helpers/DiffPlaylist'
-import { PlaylistId, RundownId, SegmentId } from '../helpers/id'
-import { Mutex } from 'async-mutex'
-import { AssignRanksToSegments } from '../helpers/AssignRanksToSegments'
-import { CoreCallType, GenerateCoreCalls } from '../helpers/GenerateCoreCalls'
-import { assertUnreachable } from '../helpers'
 import { ILogger as Logger } from '@tv2media/logger'
+import { Mutex } from 'async-mutex'
+import * as dotenv from 'dotenv'
+
+import { IngestPlaylist, IngestRundown, IngestSegment } from '@sofie-automation/blueprints-integration'
+import { StatusCode } from '@sofie-automation/shared-lib/dist/lib/status'
+
+import { CoreHandler } from '../coreHandler.js'
+import { assertUnreachable } from '../helpers.js'
+import { AssignRanksToSegments } from '../helpers/AssignRanksToSegments.js'
+import { DiffPlaylist } from '../helpers/DiffPlaylist.js'
+import { CoreCallType, GenerateCoreCalls } from '../helpers/GenerateCoreCalls.js'
+import { PlaylistId, RundownId, SegmentId } from '../helpers/id.js'
+import { ResolvedPlaylist, ResolveRundownIntoPlaylist } from '../helpers/ResolveRundownIntoPlaylist.js'
+import { InewsFTPHandler } from '../inewsHandler.js'
+import { INewsRundown } from './datastructures/Rundown.js'
+import { ISegment, RundownSegment } from './datastructures/Segment.js'
+import { SegmentRankings, SegmentRankingsInner } from './ParsedINewsToSegments.js'
+import { RundownManager } from './RundownManager.js'
 
 dotenv.config()
 
@@ -129,7 +132,8 @@ export type PlaylistCache = Map<PlaylistId, RundownId[]>
 export type RundownCache = Map<RundownId, SegmentId[]>
 export type SegmentCache = Map<SegmentId, ReducedSegment>
 
-export function IsReducedSegment(segment: any): segment is ReducedSegment {
+export function IsReducedSegment(segment: unknown): segment is ReducedSegment {
+	if (typeof segment !== 'object' || segment === null) return false
 	return Object.keys(segment).includes('locator') && !Object.keys(segment).includes('iNewsStory')
 }
 
@@ -165,7 +169,11 @@ export class RundownWatcher extends EventEmitter {
 		((event: 'segment_delete', rundownId: string, segmentId: string) => boolean) &
 		((event: 'segment_create', rundownId: string, segmentId: string, newSegment: IngestSegment) => boolean) &
 		((event: 'segment_update', rundownId: string, segmentId: string, newSegment: IngestSegment) => boolean) &
-		((event: 'segment_ranks_update', rundownId: string, newRanks: { [segmentExternalId: string]: number }) => boolean)
+		((
+			event: 'segment_ranks_update',
+			rundownId: string,
+			newRanks: { [segmentExternalId: string]: number }
+		) => boolean)
 
 	public pollInterval: number = 2000
 	private pollTimer: NodeJS.Timeout | undefined
@@ -216,7 +224,7 @@ export class RundownWatcher extends EventEmitter {
 	/**
 	 * Start the watcher
 	 */
-	startWatcher() {
+	startWatcher(): void {
 		this.logger.info('Clear all watchers')
 		this.stopWatcher()
 		this.logger.info('Start watchers')
@@ -249,27 +257,27 @@ export class RundownWatcher extends EventEmitter {
 	/**
 	 * Stop the watcher
 	 */
-	stopWatcher() {
+	stopWatcher(): void {
 		this.stopPollTimer()
 	}
 
-	private startPollTimer() {
+	private startPollTimer(): void {
 		this.stopPollTimer()
 		this.pollTimer = setTimeout(() => this.watch(), this.pollInterval)
 	}
 
-	private stopPollTimer() {
+	private stopPollTimer(): void {
 		if (this.pollTimer) {
 			clearInterval(this.pollTimer)
 			this.pollTimer = undefined
 		}
 	}
 
-	dispose() {
+	dispose(): void {
 		this.stopWatcher()
 	}
 
-	public async ResyncRundown(rundownExternalId: string) {
+	public async ResyncRundown(rundownExternalId: string): Promise<void> {
 		const release = await this.processingRundown.acquire()
 		const playlistExternalId = rundownExternalId.replace(/_\d+$/, '')
 		const playlist = this.playlists.get(playlistExternalId)
@@ -348,7 +356,7 @@ export class RundownWatcher extends EventEmitter {
 		if (cachedPlaylist) {
 			const cachedRundowns: Array<{ externalId: RundownId; segmentIds: SegmentId[] }> = []
 			for (const rundownId of cachedPlaylist) {
-				let cachedRundown = this.rundowns.get(rundownId)
+				const cachedRundown = this.rundowns.get(rundownId)
 				if (!cachedRundown) continue
 				cachedRundowns.push({ externalId: rundownId, segmentIds: cachedRundown })
 			}
@@ -375,7 +383,7 @@ export class RundownWatcher extends EventEmitter {
 
 		const iNewsData = await iNewsDataPs
 
-		for (let [externalId, data] of iNewsData.entries()) {
+		for (const [externalId, data] of iNewsData.entries()) {
 			this.cachedINewsData.set(externalId, data)
 		}
 
@@ -428,8 +436,8 @@ export class RundownWatcher extends EventEmitter {
 
 		const ingestCacheData: Map<SegmentId, RundownSegment> = new Map()
 
-		for (let cache of ingestCacheList) {
-			for (let [segmentId, data] of cache) {
+		for (const cache of ingestCacheList) {
+			for (const [segmentId, data] of cache) {
 				ingestCacheData.set(segmentId, data)
 			}
 		}
@@ -481,7 +489,7 @@ export class RundownWatcher extends EventEmitter {
 		this.cachedPlaylistAssignments.set(playlistId, playlistAssignments)
 		this.cachedAssignedRundowns.set(playlistId, assignedRundowns)
 
-		let segmentRanks = AssignRanksToSegments(
+		const segmentRanks = AssignRanksToSegments(
 			playlistAssignments,
 			changes,
 			segmentChanges,
@@ -555,7 +563,7 @@ export class RundownWatcher extends EventEmitter {
 
 	private updatePreviousRanks(rundownId: RundownId, segments: Map<SegmentId, number>) {
 		const ranksMap: Map<SegmentId, SegmentRankingsInner> = new Map()
-		for (let [segmentId, rank] of segments) {
+		for (const [segmentId, rank] of segments) {
 			ranksMap.set(segmentId, {
 				rank,
 			})
@@ -578,27 +586,27 @@ export class RundownWatcher extends EventEmitter {
 		this.emit('rundown_update', rundown.externalId, rundown)
 	}
 
-	private emitRundownMetaDataUpdated(rundown: IngestRundown) {
+	private emitRundownMetaDataUpdated(rundown: IngestRundown): void {
 		this.logger.info(`Emitting rundown metadata update ${rundown.externalId}`)
 		this.emit('rundown_metadata_update', rundown.externalId, rundown)
 	}
 
-	private emitSegmentCreated(rundownId: RundownId, segment: IngestSegment) {
+	private emitSegmentCreated(rundownId: RundownId, segment: IngestSegment): void {
 		this.logger.info(`Emitting segment create ${segment.externalId} in ${rundownId}`)
 		this.emit('segment_create', rundownId, segment.externalId, segment)
 	}
 
-	private emitSegmentUpdated(rundownId: RundownId, segment: IngestSegment) {
+	private emitSegmentUpdated(rundownId: RundownId, segment: IngestSegment): void {
 		this.logger.info(`Emitting segment update ${segment.externalId} in ${rundownId}`)
 		this.emit('segment_update', rundownId, segment.externalId, segment)
 	}
 
-	public emitSegmentDeleted(rundownId: RundownId, segmentId: SegmentId) {
+	public emitSegmentDeleted(rundownId: RundownId, segmentId: SegmentId): void {
 		this.logger.info(`Emitting segment delete ${segmentId} in ${rundownId}`)
 		this.emit('segment_delete', rundownId, segmentId)
 	}
 
-	private emitUpdatedSegmentRanks(rundownId: RundownId, ranks: { [segmentId: string]: number }) {
+	private emitUpdatedSegmentRanks(rundownId: RundownId, ranks: { [segmentId: string]: number }): void {
 		this.logger.info(`Emitting segment ranks update ${rundownId}`)
 		this.emit('segment_ranks_update', rundownId, ranks)
 	}

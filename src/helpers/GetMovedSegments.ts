@@ -1,4 +1,4 @@
-import { SegmentId } from './id'
+import { SegmentId } from './id.js'
 
 export function GetMovedSegments(
 	oldOrder: SegmentId[],

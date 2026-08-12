@@ -1,8 +1,10 @@
 import { INewsStory } from '@tv2media/inews'
-import { IngestSegment } from '@sofie-automation/blueprints-integration'
-import { ISegment } from './classes/datastructures/Segment'
 
-export function literal<T>(o: T) {
+import { IngestSegment } from '@sofie-automation/blueprints-integration'
+
+import { ISegment } from './classes/datastructures/Segment.js'
+
+export function literal<T>(o: T): T {
 	return o
 }
 
@@ -38,7 +40,7 @@ export function parseModifiedDateFromIngestSegmentWithFallbackToNow(segment: Ing
 	return new Date()
 }
 
-export function ReflectPromise<T>(
+export async function ReflectPromise<T>(
 	ps: Promise<T>
 ): Promise<{ value: T; status: 'fulfilled' } | { e: any; status: 'rejected' }> {
 	return ps.then(

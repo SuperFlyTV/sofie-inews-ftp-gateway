@@ -31,7 +31,7 @@
     "buildinspect": "yarn build && yarn inspect",
     "buildinspect:dev": "yarn build && DEV=true yarn inspect",
     "build:main": "tsc -p tsconfig.json",
-    "lint": "prettier --check .",
+    "lint": "yarn lint:eslint && yarn lint:prettier",
     "lint-fix": "prettier --write .",
     "unit": "jest --coverage",
     "test": "yarn lint && yarn unit",
@@ -46,8 +46,12 @@
     "reset": "git clean -dfx && git reset --hard && yarn",
     "ci": "yarn test",
     "validate:dependencies": "yarn npm audit --environment production",
-    "license-validate": "node-license-validator -p -d --allow-licenses MIT MIT/X11 BSD BSD-3-Clause BSD-2-Clause ISC Apache Apache-2.0 Unlicense --allow-packages cycle",
-    "unlinkall": "yarn unlink @sofie-automation/server-core-integration && yarn --check-files"
+    "license-validate": "sofie-licensecheck",
+    "unlinkall": "yarn unlink @sofie-automation/server-core-integration && yarn --check-files",
+    "lint:eslint": "eslint .",
+    "lint:prettier": "prettier --check .",
+    "lint:fix": "yarn lint:eslint --fix && yarn lint:prettier --write",
+    "prepare": "husky"
   },
   "scripts-info": {
     "info": "Display information about the scripts",
@@ -76,7 +80,7 @@
     "async-mutex": "^0.3.1",
     "cross-env": "^7.0.3",
     "dotenv": "^8.0.0",
-    "tslib": "^2.0.0",
+    "tslib": "^2.8.1",
     "underscore": "^1.13.8",
     "xml2js": "^0.6.2",
     "yargs": "^16.2.0"
@@ -87,6 +91,7 @@
     "ansi-regex": "^5.0.1"
   },
   "devDependencies": {
+    "@sofie-automation/code-standard-preset": "3.2.2-nightly-main-20260514-075715-1e2f3f5",
     "@types/dotenv": "^6.1.1",
     "@types/jest": "^24.0.11",
     "@types/node": "^20.0.0",
@@ -94,23 +99,31 @@
     "@types/xml2js": "^0.4.4",
     "@types/yargs": "^15.0.8",
     "codecov": "^3.6.1",
+    "eslint": "^10.3.0",
+    "husky": "^9.1.7",
     "jest": "^24.5.0",
+    "lint-staged": "^17.0.4",
     "node-license-validator": "^1.3.0",
     "npm-scripts-info": "^0.3.9",
     "open-cli": "^6.0.1",
-    "prettier": "2.1.2",
+    "prettier": "^3.8.3",
     "standard-version": "^9.0.0",
     "trash-cli": "^5.0.0",
     "ts-jest": "^26.4.1",
-    "tslint": "^5.11.0",
-    "tslint-config-prettier": "^1.18.0",
-    "tslint-plugin-prettier": "^2.1.0",
-    "typescript": "~5.1.6",
-    "typescript-tslint-plugin": "^0.5.5"
+    "typescript": "^6.0.3"
   },
   "standard-version": {
     "message": "chore(release): %s [skip ci]",
     "tagPrefix": ""
   },
-  "packageManager": "yarn@3.6.4"
+  "packageManager": "yarn@4.14.1",
+  "prettier": "@sofie-automation/code-standard-preset/prettier.config.mjs",
+  "lint-staged": {
+    "*.{css,json,md,scss}": [
+      "prettier --check"
+    ],
+    "*.{ts,tsx,js,jsx,mjs,cjs}": [
+      "eslint"
+    ]
+  }
 }

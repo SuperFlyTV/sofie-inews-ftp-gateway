@@ -1,16 +1,14 @@
 import { createDefaultLogger, Level } from '@tv2media/logger'
 
-export let logger = createDefaultLogger()
+export const logger = createDefaultLogger()
 
-export function setupLogger() {
+export function setupLogger(): void {
 	// Hijack console.log:
-	// @ts-ignore
 	if (!process.env.DEV) {
-		let orgConsoleLog = console.log
+		const orgConsoleLog = console.log
 		console.log = function (...args: any[]) {
 			if (args.length >= 1) {
 				try {
-					// @ts-ignore one or more arguments
 					logger.debug(args)
 				} catch (e) {
 					orgConsoleLog('CATCH')
@@ -22,7 +20,7 @@ export function setupLogger() {
 	}
 }
 
-export function setLogLevel(level: keyof typeof Level) {
+export function setLogLevel(level: keyof typeof Level): void {
 	logger.setLevel(Level[level])
 }
 

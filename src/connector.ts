@@ -1,15 +1,17 @@
-import { InewsFTPHandler, INewsDeviceSettings } from './inewsHandler'
-import { CoreHandler, CoreConfig } from './coreHandler'
+import { ILogger as Logger } from '@tv2media/logger'
 import * as _ from 'underscore'
-import { Process } from './process'
+
 import {
 	Observer,
-	PeripheralDeviceId,
 	PeripheralDeviceForDevice,
+	PeripheralDeviceId,
 	PeripheralDevicePubSubCollectionsNames,
 } from '@sofie-automation/server-core-integration'
-import { ensureLogLevel, setLogLevel } from './logger'
-import { ILogger as Logger } from '@tv2media/logger'
+
+import { CoreConfig, CoreHandler } from './coreHandler.js'
+import { INewsDeviceSettings, InewsFTPHandler } from './inewsHandler.js'
+import { ensureLogLevel, setLogLevel } from './logger.js'
+import { Process } from './process.js'
 
 export interface Config {
 	process: ProcessConfig
@@ -63,6 +65,7 @@ export class Connector {
 			this.dispose().catch((e) => this._logger.data(e).error('Error during dispose'))
 
 			setTimeout(() => {
+				// eslint-disable-next-line n/no-process-exit
 				process.exit(0)
 			}, 10 * 1000)
 		}
@@ -90,26 +93,28 @@ export class Connector {
 		}
 	}
 
-	setupObserver() {
+	setupObserver(): void {
 		// Setup observer.
-		let observer = this.coreHandler.core.observe(PeripheralDevicePubSubCollectionsNames.peripheralDeviceForDevice)
+		const observer = this.coreHandler.core.observe(PeripheralDevicePubSubCollectionsNames.peripheralDeviceForDevice)
 		this._observers.push(observer)
 
-		let addedChanged = (id: PeripheralDeviceId) => {
+		const addedChanged = (id: PeripheralDeviceId) => {
 			// Check that collection exists.
-			let devices = this.coreHandler.core.getCollection(PeripheralDevicePubSubCollectionsNames.peripheralDeviceForDevice)
+			const devices = this.coreHandler.core.getCollection(
+				PeripheralDevicePubSubCollectionsNames.peripheralDeviceForDevice
+			)
 			if (!devices) throw Error('"peripheralDeviceForDevice" collection not found!')
 
 			// Find studio ID.
-			let dev = devices.findOne(id)
+			const dev = devices.findOne(id)
 
 			if (dev) {
-				let settings = (dev.deviceSettings || {}) as INewsDeviceSettings
+				const settings = (dev.deviceSettings || {}) as INewsDeviceSettings
 				settings.queues = settings.queues?.filter((q) => q !== '')
 				if (!this._settings || !_.isEqual(_.omit(settings, 'debug'), _.omit(this._settings, 'debug'))) {
 					this.iNewsFTPHandler
 						.dispose()
-						.then(() => {
+						.then(async () => {
 							this.iNewsFTPHandler = new InewsFTPHandler(this._logger, this.coreHandler)
 							return this.initInewsFTPHandler()
 						})
@@ -121,7 +126,7 @@ export class Connector {
 
 				if (settings.debug !== undefined && settings.debug !== this._debug) {
 					this._debug = settings.debug
-					const logLevel = this._debug ? 'debug' : ensureLogLevel(process.env.LOG_LEVEL) ?? 'warn'
+					const logLevel = this._debug ? 'debug' : (ensureLogLevel(process.env.LOG_LEVEL) ?? 'warn')
 					setLogLevel(logLevel)
 				}
 

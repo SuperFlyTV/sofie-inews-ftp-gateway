@@ -1,14 +1,18 @@
-import * as _ from 'underscore'
-import { CoreHandler } from './coreHandler'
-import { RundownWatcher, RundownMap, ReducedRundown, ReducedSegment } from './classes/RundownWatcher'
 import * as inews from '@tv2media/inews'
-import { literal } from './helpers'
-import { RundownSegment } from './classes/datastructures/Segment'
-import { VERSION } from './version'
 import { ILogger as Logger } from '@tv2media/logger'
+
+import {
+	PeripheralDeviceForDevice,
+	PeripheralDevicePubSubCollectionsNames,
+} from '@sofie-automation/server-core-integration'
 import { StatusCode } from '@sofie-automation/shared-lib/dist/lib/status'
 import { PeripheralDeviceAPIMethods } from '@sofie-automation/shared-lib/dist/peripheralDevice/methodsAPI'
-import { PeripheralDeviceForDevice, PeripheralDevicePubSubCollectionsNames } from '@sofie-automation/server-core-integration'
+
+import { RundownSegment } from './classes/datastructures/Segment.js'
+import { ReducedRundown, ReducedSegment, RundownMap, RundownWatcher } from './classes/RundownWatcher.js'
+import { CoreHandler } from './coreHandler.js'
+import { literal } from './helpers.js'
+import { VERSION } from './version.js'
 
 export interface INewsDeviceSettings {
 	hosts?: Array<string>
@@ -43,8 +47,8 @@ export class InewsFTPHandler {
 	}
 
 	async init(coreHandler: CoreHandler): Promise<void> {
-		let peripheralDevice = await coreHandler.core.getPeripheralDevice()
-		this._settings = (peripheralDevice.deviceSettings || {}) as INewsDeviceSettings
+		const peripheralDevice = await coreHandler.core.getPeripheralDevice()
+		this._settings = peripheralDevice.deviceSettings || {}
 
 		try {
 			await this._setupDevices()
@@ -65,7 +69,9 @@ export class InewsFTPHandler {
 	 * Find this peripheral device in peripheralDevices collection.
 	 */
 	private getThisPeripheralDevice(): PeripheralDeviceForDevice | undefined {
-		let peripheralDevices = this._coreHandler.core.getCollection(PeripheralDevicePubSubCollectionsNames.peripheralDeviceForDevice)
+		const peripheralDevices = this._coreHandler.core.getCollection(
+			PeripheralDevicePubSubCollectionsNames.peripheralDeviceForDevice
+		)
 		return peripheralDevices.findOne(this._coreHandler.core.deviceId)
 	}
 
@@ -85,26 +91,28 @@ export class InewsFTPHandler {
 			operationTimeout: 60000, // 60s, this is new in node-inews after the TS rewrite; setting it too low may result in never getting any data if the server/connection is slow
 		})
 
-		this.iNewsConnection.on('status', async (status) => {
-			if (status.name === 'disconnected') {
-				if (this._isConnected) {
-					this._isConnected = false
-					this._reconnectAttempts = 0
-					await this._coreHandler.setStatus(StatusCode.WARNING_MAJOR, ['Attempting to reconnect'])
-					this._logger.warn(`Disconnected from iNews at ${status.host}`)
-				} else {
-					this._reconnectAttempts++
-					if (this._reconnectAttempts >= (this._settings?.hosts ?? []).length) {
-						await this._coreHandler.setStatus(StatusCode.BAD, ['No servers available'])
-						this._logger.warn(`Cannot connect to any of the iNews hosts`)
+		this.iNewsConnection.on('status', (status) => {
+			void (async () => {
+				if (status.name === 'disconnected') {
+					if (this._isConnected) {
+						this._isConnected = false
+						this._reconnectAttempts = 0
+						await this._coreHandler.setStatus(StatusCode.WARNING_MAJOR, ['Attempting to reconnect'])
+						this._logger.warn(`Disconnected from iNews at ${status.host}`)
+					} else {
+						this._reconnectAttempts++
+						if (this._reconnectAttempts >= (this._settings?.hosts ?? []).length) {
+							await this._coreHandler.setStatus(StatusCode.BAD, ['No servers available'])
+							this._logger.warn(`Cannot connect to any of the iNews hosts`)
+						}
 					}
+				} else if (status.name === 'connected') {
+					this._isConnected = true
+					this._logger.info(`Connected to iNews at ${status.host}`)
+				} else if (status.name === 'connecting') {
+					this._logger.info(`Connecting to iNews at ${status.host}`)
 				}
-			} else if (status.name === 'connected') {
-				this._isConnected = true
-				this._logger.info(`Connected to iNews at ${status.host}`)
-			} else if (status.name === 'connecting') {
-				this._logger.info(`Connecting to iNews at ${status.host}`)
-			}
+			})()
 		})
 
 		this.iNewsConnection.on('error', (error) => {
@@ -112,7 +120,7 @@ export class InewsFTPHandler {
 		})
 
 		if (!this.iNewsWatcher) {
-			let peripheralDevice = this.getThisPeripheralDevice()
+			const peripheralDevice = this.getThisPeripheralDevice()
 			if (peripheralDevice) {
 				await this._coreHandler.setStatus(StatusCode.UNKNOWN, ['Initializing iNews connection..'])
 				const queues = (this._settings.queues ?? []).filter((q) => !!q)
@@ -138,16 +146,16 @@ export class InewsFTPHandler {
 	 *  Get the current rundown state from Core and convert it to rundowns.
 	 */
 	async ingestDataToRundowns(gatewayVersion: string, rundownExternalIds: string[]): Promise<RundownMap> {
-		let rundownsCache: RundownMap = new Map()
+		const rundownsCache: RundownMap = new Map()
 
 		if (!rundownExternalIds.length) {
 			return rundownsCache
 		}
 
-		let coreRundowns = await this._coreHandler.GetRundownCache(rundownExternalIds)
+		const coreRundowns = await this._coreHandler.GetRundownCache(rundownExternalIds)
 
 		coreRundowns.forEach((ingestRundown) => {
-			let rundown: ReducedRundown = {
+			const rundown: ReducedRundown = {
 				externalId: ingestRundown.externalId,
 				name: ingestRundown.name,
 				gatewayVersion: ingestRundown.payload.gatewayVersion || gatewayVersion,
@@ -172,7 +180,7 @@ export class InewsFTPHandler {
 		return rundownsCache
 	}
 
-	updateChanges(iNewsWatcher: RundownWatcher) {
+	updateChanges(iNewsWatcher: RundownWatcher): void {
 		iNewsWatcher
 			.on('info', (message: any) => {
 				this._logger.info(message)
@@ -184,45 +192,44 @@ export class InewsFTPHandler {
 				this._logger.error(warning)
 			})
 			.on('rundown_delete', (rundownExternalId) => {
-				this._coreHandler.core
+				void this._coreHandler.core
 					.callMethodRaw(PeripheralDeviceAPIMethods.dataRundownDelete, [rundownExternalId])
 					.catch(this._logger.error)
 			})
 			.on('rundown_create', (_rundownExternalId, rundown) => {
-				this._coreHandler.core
+				void this._coreHandler.core
 					.callMethodRaw(PeripheralDeviceAPIMethods.dataRundownCreate, [rundown])
 					.catch(this._logger.error)
 			})
 			.on('rundown_update', (_rundownExternalId, rundown) => {
-				this._coreHandler.core
+				void this._coreHandler.core
 					.callMethodRaw(PeripheralDeviceAPIMethods.dataRundownUpdate, [rundown])
 					.catch(this._logger.error)
 			})
 			.on('rundown_metadata_update', (_rundownExternalId, rundown) => {
-				this._coreHandler.core
+				void this._coreHandler.core
 					.callMethodRaw(PeripheralDeviceAPIMethods.dataRundownMetaDataUpdate, [rundown])
 					.catch(this._logger.error)
 			})
 			.on('segment_delete', (rundownExternalId, segmentId) => {
-				this._coreHandler.core
+				void this._coreHandler.core
 					.callMethodRaw(PeripheralDeviceAPIMethods.dataSegmentDelete, [rundownExternalId, segmentId])
 					.catch(this._logger.error)
 			})
 			.on('segment_create', (rundownExternalId, _segmentId, newSegment) => {
-				this._coreHandler.core
+				void this._coreHandler.core
 					.callMethodRaw(PeripheralDeviceAPIMethods.dataSegmentCreate, [rundownExternalId, newSegment])
 					.catch(this._logger.error)
 			})
 			.on('segment_update', (rundownExternalId, _segmentId, newSegment) => {
-				this._coreHandler.core
+				void this._coreHandler.core
 					.callMethodRaw(PeripheralDeviceAPIMethods.dataSegmentUpdate, [rundownExternalId, newSegment])
 					.catch(this._logger.error)
 			})
 			.on('segment_ranks_update', (rundownExteralId, newRanks) => {
-				this._coreHandler.core.callMethodRaw(PeripheralDeviceAPIMethods.dataSegmentRanksUpdate, [
-					rundownExteralId,
-					newRanks,
-				])
+				void this._coreHandler.core
+					.callMethodRaw(PeripheralDeviceAPIMethods.dataSegmentRanksUpdate, [rundownExteralId, newRanks])
+					.catch(this._logger.error)
 			})
 	}
 
