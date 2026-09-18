@@ -108,23 +108,26 @@ export class CoreHandler {
 	async dispose(): Promise<void> {
 		await this.core.setStatus({
 			statusCode: StatusCode.FATAL,
-			messages: ['Shutting down'],
+			statusDetails: [
+				{
+					message: 'Shutting down',
+				},
+			],
 		})
 		await this.core.destroy()
 	}
 
 	private lastSentStatus: {
-		statusCode: StatusCode,
+		statusCode: StatusCode
 		messages: string[]
 	} = {
 		statusCode: StatusCode.UNKNOWN,
-		messages: []
+		messages: [],
 	}
 	/**
 	 * Report gateway status to core
 	 */
 	async setStatus(statusCode: StatusCode, messages: string[]): Promise<void> {
-
 		const newStatus = {
 			statusCode: statusCode,
 			messages: messages,
@@ -135,7 +138,7 @@ export class CoreHandler {
 		try {
 			await this.core.setStatus({
 				statusCode: statusCode,
-				messages: messages,
+				statusDetails: messages.map((message) => ({ message })),
 			})
 		} catch (error) {
 			this.logger.data(error).warn('Error when setting status:')
