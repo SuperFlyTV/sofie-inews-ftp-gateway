@@ -3,6 +3,7 @@
 	"exclude": ["node_modules/**"],
 	"compilerOptions": {
 		"resolveJsonModule": true,
-		"esModuleInterop": true
+		"esModuleInterop": true,
+		"isolatedModules": true
 	}
 }

@@ -3,7 +3,7 @@ import yargs from 'yargs/yargs'
 import { Config, Connector } from './connector.js'
 import { ensureLogLevel, logger, setLogLevel, setupLogger } from './logger.js'
 
-const argv = yargs(process.argv.slice(2))
+const argv = await yargs(process.argv.slice(2))
 	.options({
 		host: { type: 'string', default: '127.0.0.1', describe: 'Host of core' },
 		port: { type: 'number', default: 3000, describe: 'Port of core' },
