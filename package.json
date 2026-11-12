@@ -3,6 +3,7 @@
   "version": "46.2.0",
   "description": "",
   "main": "dist/index.js",
+  "type": "module",
   "contributors": [
     {
       "name": "Johan Nyman",
@@ -72,18 +73,18 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@sofie-automation/blueprints-integration": "26.3.0-nightly-main-20260907-102031-1fc4830.0",
-    "@sofie-automation/server-core-integration": "26.3.0-nightly-main-20260907-102031-1fc4830.0",
-    "@sofie-automation/shared-lib": "26.3.0-nightly-main-20260907-102031-1fc4830.0",
+    "@sofie-automation/blueprints-integration": "26.9.3",
+    "@sofie-automation/server-core-integration": "26.9.3",
+    "@sofie-automation/shared-lib": "26.9.3",
     "@tv2media/inews": "git+https://github.com/superflytv/node-inews.git#2712651ec37bf0dad414988eea9f6322b0c04f52",
     "@tv2media/logger": "^1.2.4",
-    "async-mutex": "^0.3.1",
-    "cross-env": "^7.0.3",
-    "dotenv": "^8.0.0",
-    "tslib": "^2.8.1",
+    "async-mutex": "^0.5.0",
+    "cross-env": "^10.1.0",
+    "dotenv": "^18.0.10",
+    "tslib": "^2.9.1",
     "underscore": "^1.13.8",
     "xml2js": "^0.6.2",
-    "yargs": "^16.2.0"
+    "yargs": "^18.2.0"
   },
   "resolutions": {
     "minimist": "^1.2.3",
@@ -91,25 +92,25 @@
     "ansi-regex": "^5.0.1"
   },
   "devDependencies": {
-    "@sofie-automation/code-standard-preset": "3.2.2-nightly-main-20260514-075715-1e2f3f5",
-    "@types/dotenv": "^6.1.1",
-    "@types/jest": "^24.0.11",
+    "@sofie-automation/code-standard-preset": "^4.0.3",
+    "@types/dotenv": "^8.2.3",
+    "@types/jest": "^30.0.0",
     "@types/node": "^20.0.0",
-    "@types/underscore": "^1.8.13",
-    "@types/xml2js": "^0.4.4",
-    "@types/yargs": "^15.0.8",
-    "codecov": "^3.6.1",
-    "eslint": "^10.3.0",
+    "@types/underscore": "^1.13.0",
+    "@types/xml2js": "^0.4.14",
+    "@types/yargs": "^17.0.35",
+    "codecov": "^3.8.3",
+    "eslint": "^10.14.0",
     "husky": "^9.1.7",
-    "jest": "^24.5.0",
-    "lint-staged": "^17.0.4",
-    "node-license-validator": "^1.3.0",
+    "jest": "^30.5.2",
+    "lint-staged": "^17.6.0",
+    "node-license-validator": "^1.3.2",
     "npm-scripts-info": "^0.3.9",
     "open-cli": "^6.0.1",
-    "prettier": "^3.8.3",
-    "standard-version": "^9.0.0",
-    "trash-cli": "^5.0.0",
-    "ts-jest": "^26.4.1",
+    "prettier": "^3.9.10",
+    "standard-version": "^9.5.0",
+    "trash-cli": "^7.2.0",
+    "ts-jest": "^29.4.15",
     "typescript": "^6.0.3"
   },
   "standard-version": {
@@ -117,7 +118,7 @@
     "tagPrefix": ""
   },
   "packageManager": "yarn@4.14.1",
-  "prettier": "@sofie-automation/code-standard-preset/prettier.config.mjs",
+  "prettier": "./prettier.config.mjs",
   "lint-staged": {
     "*.{css,json,md,scss}": [
       "prettier --check"

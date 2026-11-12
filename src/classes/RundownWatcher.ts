@@ -232,7 +232,6 @@ export class RundownWatcher extends EventEmitter {
 		// Subsequent runs
 		this.startPollTimer()
 	}
-	
 
 	private watch() {
 		this.stopPollTimer()
@@ -250,7 +249,7 @@ export class RundownWatcher extends EventEmitter {
 					await this.coreHandler.setStatus(StatusCode.WARNING_MAJOR, ['INews rundowns check failed'])
 				}
 			)
-			.catch(this._logger.error)
+			.catch((e) => this._logger.error(e))
 			.finally(() => this.startPollTimer())
 	}
 
@@ -324,7 +323,7 @@ export class RundownWatcher extends EventEmitter {
 			await this.coreHandler.setStatus(StatusCode.WARNING_MAJOR, ['No Queues defined in settings!'])
 			return
 		}
-		for (let queue of this.iNewsQueue) {
+		for (const queue of this.iNewsQueue) {
 			await this.checkINewsRundownById(queue)
 		}
 	}

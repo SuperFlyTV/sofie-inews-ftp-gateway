@@ -456,7 +456,7 @@ export class CoreHandler {
 		const dirNames = ['@sofie-automation/server-core-integration']
 		try {
 			const nodeModulesDirectories = fs.readdirSync('node_modules')
-			_.each(nodeModulesDirectories, (dir) => {
+			_.each(nodeModulesDirectories, (dir: string) => {
 				try {
 					if (dirNames.indexOf(dir) !== -1) {
 						let file = 'node_modules/' + dir + '/package.json'
